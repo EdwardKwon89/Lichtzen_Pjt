@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  /* Lichtzen Signature Colors */
+  --color-brand-navy: #0A0E1A;
+  --color-brand-violet: #8B5CF6;
+  --color-brand-cyan: #06B6D4;
+  --color-brand-accent: #8B5CF6;
+
+  /* Surface Tiers (Tonal Layering based on Stitch) */
+  --color-surface-base: #0A0E1A;
+  --color-surface-plate: #171C21;
+  --color-surface-highlight: #30353B;
+
+  /* Typography */
+  --font-heading: "Outfit", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  /* Transitions & Effects */
+  --animate-glow: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 10px -2px var(--color-brand-violet);
+  }
+  to {
+    box-shadow: 0 0 20px 2px var(--color-brand-cyan);
+  }
+}
+
+:root {
+  --background: #0A0E1A;
+  --foreground: #F8FAFC;
+  --brand-primary: #0A0E1A;
+  --brand-accent: #8B5CF6;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+/* Custom Scrollbar for Premium Feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-brand-navy);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-violet);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-cyan);
+}
