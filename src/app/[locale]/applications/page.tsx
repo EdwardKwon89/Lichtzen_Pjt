@@ -1,0 +1,63 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
+
+const industries = ["battery", "oled"];
+
+export default function ApplicationsPage() {
+  const t = useTranslations('Applications');
+
+  return (
+    <div className="bg-brand-navy min-h-screen pt-24 pb-32">
+      <div className="container mx-auto px-6">
+        <motion.header 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-3xl mb-24"
+        >
+          <h1 className="text-6xl font-heading font-black text-white mb-8 tracking-tighter uppercase">
+            {t('title')}
+          </h1>
+          <p className="text-xl text-slate-400 font-light leading-relaxed">
+            {t('desc')}
+          </p>
+        </motion.header>
+
+        <div className="grid grid-cols-1 gap-12">
+          {industries.map((ind, idx) => (
+            <motion.div 
+              key={ind}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.2 }}
+              className="group relative rounded-[40px] overflow-hidden bg-slate-900 border border-white/5 flex flex-col lg:flex-row"
+            >
+              <div className="lg:w-1/2 h-[400px] bg-slate-800 relative overflow-hidden flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand-violet/20 via-transparent to-brand-cyan/20 group-hover:scale-110 transition-transform duration-700" />
+                <span className="text-8xl opacity-20 grayscale group-hover:grayscale-0 transition-all">{ind === 'battery' ? '🔋' : '📱'}</span>
+              </div>
+              <div className="lg:w-1/2 p-12 lg:p-20 flex flex-col justify-center">
+                <span className="text-brand-violet font-mono text-xs tracking-widest uppercase mb-4">{t(`${ind}.name`)}</span>
+                <h3 className="text-4xl font-bold text-white mb-6 tracking-tight">{t(`${ind}.title`)}</h3>
+                <p className="text-slate-400 text-lg leading-relaxed mb-10 font-light">
+                  {t(`${ind}.desc`)}
+                </p>
+                <div className="space-y-4">
+                  {[1, 2, 3].map(f => (
+                    <div key={f} className="flex items-center gap-4">
+                      <div className="w-2 h-2 rounded-full bg-brand-cyan shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
+                      <span className="text-slate-300 font-medium">{t(`${ind}.feat${f}`)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

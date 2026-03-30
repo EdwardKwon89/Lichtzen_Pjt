@@ -1,0 +1,118 @@
+{
+  "Common": {
+    "title": "리트젠",
+    "subtitle": "빛의 정밀함 (The Precision of Light)",
+    "contact": "상담 및 문의",
+    "learnMore": "더 알아보기",
+    "home": "홈",
+    "products": "제품소개",
+    "technology": "핵심기술",
+    "applications": "적용분야",
+    "about": "회사소개",
+    "support": "고객지원",
+    "precision": "정밀함",
+    "sustainability": "지속가능성",
+    "innovation": "기술혁신"
+  },
+  "Home": {
+    "hero": {
+      "title1": "완벽한 빛을",
+      "title2": "설계합니다",
+      "desc": "UV 및 MIR 광학 시스템의 글로벌 리더. 차세대 제조 공정을 위한 고성능 건조 및 경화 솔루션을 제공합니다."
+    },
+    "features": {
+      "precision": "광학 정밀도",
+      "precisionDesc": "나노 스케일의 정밀한 배광 제어 기술.",
+      "energy": "에너지 효율",
+      "energyDesc": "MIR 기술로 전력 소비량을 30% 이상 절감.",
+      "global": "글로벌 네트워크",
+      "globalDesc": "배터리, 디스플레이, 반도체 분야 선도 기업들의 파트너."
+    }
+  },
+  "About": {
+    "visionTitle": "기업 비전",
+    "visionMain1": "완벽한 빛을",
+    "visionMain2": "설계합니다",
+    "ceoMessage": "우리는 단순한 장비를 판매하는 것이 아니라, 인류 산업의 진보에 필요한 정밀함을 제공합니다. 효율, 정확성, 그리고 혁신은 리트젠 광학 기술의 핵심 기둥입니다.",
+    "ceoLabel": "리트젠 대표이사 및 창립 멤버",
+    "rndTitle": "기술의 최전선",
+    "rndDesc": "2010년부터 이어져 온 광학 R&D 센터",
+    "timelineHeading": "광학 엑설런스의 10년",
+    "timeline": {
+      "2010": "리트젠 설립 (UV/IR 광학 시스템 전문)",
+      "2013": "벤처기업 인증 및 ISO 9001/14001 획득",
+      "2016": "기업부설 연구소(광학 물리 연구소) 설립",
+      "2019": "EV 배터리용 고효율 MIR 건조 시스템 개발",
+      "2022": "글로벌 수출 확대 (연 매출 1,000만 달러 돌파)",
+      "2024": "차세대 지능형 UV 경화 플랫폼 출시"
+    },
+    "values": {
+      "precision": "나노 스케일의 정밀한 광 분포 제어 기술.",
+      "sustainability": "최소한의 에너지 소비로 친환경 경화 솔루션 실현.",
+      "innovation": "디스플레이 및 배터리 제조 공정의 미래 선도."
+    }
+  },
+  "Applications": {
+    "title": "주요 적용 산업",
+    "desc": "세계에서 가장 정밀한 제조 공정을 위한 선도적인 광학 솔루션.",
+    "battery": {
+      "name": "2차 전지",
+      "title": "전극 건조 솔루션",
+      "desc": "리트젠의 MIR 시스템은 후막 전극에 대한 심부 건조를 제공하여 생산 속도를 40% 향상시키고 에너지 비용을 절감합니다.",
+      "feat1": "신속한 용제 증발",
+      "feat2": "활물질 안정화",
+      "feat3": "에너지 효율 (IR + 대류)"
+    },
+    "oled": {
+      "name": "OLED / 디스플레이",
+      "title": "정밀 UV 본딩 및 봉지",
+      "desc": "울트라 내로우 광폭 제어 및 정밀 냉각 시스템을 통해 유기물 손상 없는 OLED 봉지 공정을 구현합니다.",
+      "feat1": "열 손상 없는 경화",
+      "feat2": "초균일 조사(Uniformity)",
+      "feat3": "고속 연속 경화"
+    }
+  },
+  "Technology": {
+    "title": "핵심 광학 기술",
+    "desc": "리트젠은 독보적인 광학 설계 역량으로 산업용 조사 시스템의 한계를 돌파합니다.",
+    "uvTitle": "통합 UV 시스템",
+    "uvDesc": "365nm부터 405nm까지 최적의 파장 조합과 냉각 기술을 결합하여 고품질 경화를 실현합니다.",
+    "mirTitle": "MIR 건조 기술",
+    "mirDesc": "열 대류와 복사열을 결합하여 내부부터 균일하게 건조하는 하이브리드 솔루션입니다.",
+    "specLabel": "기술 사양",
+    "uniformity": "최대 99.5% 균일도",
+    "cooling": "고효율 수냉/공랭 시스템",
+    "custom": "공정별 맞춤형 설계"
+  },
+  "Support": {
+    "title": "고객 지원 및 문의",
+    "desc": "기술적 지원이 필요하시거나 제품 도입 문의가 있으시면 언제든 연락주세요.",
+    "formTitle": "문의 양식",
+    "name": "성함/담당자",
+    "email": "이메일 주소",
+    "message": "문의 내용",
+    "submit": "문의 제출하기",
+    "infoTitle": "연락처 정보",
+    "address": "서울특별시 서대문구 리트젠 본사",
+    "phone": "전화번호: +82 2-XXX-XXXX",
+    "emailText": "이메일: info@lichtzen.com"
+  },
+  "Products": {
+    "uvRoll": {
+      "title": "UV 롤투롤 시스템",
+      "desc": "높은 균일도로 고속 연속 공정에 최적화된 시스템.",
+      "specTitle": "주요 사양",
+      "spec1": "웹 폭 (Web Width)",
+      "spec2": "공정 속도 (Speed)",
+      "spec3": "조사 균일도 (Uniformity)"
+    },
+    "mirSystem": {
+      "title": "MIR 건조 시스템",
+      "desc": "전극의 심부까지 효율적인 건조를 위한 중단파 적외선 솔루션.",
+      "specTitle": "핵심 사양",
+      "spec1": "피크 파장 (Peak Wavelength)",
+      "spec2": "가열 효율",
+      "spec3": "응답 시간"
+    }
+  }
+}

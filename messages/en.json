@@ -1,0 +1,93 @@
+{
+  "Common": {
+    "title": "Lichtzen",
+    "subtitle": "The Precision of Light",
+    "contact": "Inquiry",
+    "learnMore": "Learn More",
+    "home": "Home",
+    "products": "Products",
+    "technology": "Technology",
+    "applications": "Applications",
+    "about": "About",
+    "support": "Support",
+    "precision": "Precision",
+    "sustainability": "Sustainability",
+    "innovation": "Innovation"
+  },
+  "Home": {
+    "hero": {
+      "title1": "Engineering",
+      "title2": "The Perfect Light",
+      "desc": "Global Leader in UV & MIR Optical Systems. Providing high-performance drying and curing solutions for next-gen manufacturing."
+    },
+    "features": {
+      "precision": "Optical Precision",
+      "precisionDesc": "Nano-scale accuracy in light distribution control.",
+      "energy": "Energy Efficiency",
+      "energyDesc": "30% reduction in power consumption with MIR technology.",
+      "global": "Global Network",
+      "globalDesc": "Serving elite clients in Battery, Display, and Semiconductor industries."
+    }
+  },
+  "About": {
+    "visionTitle": "Our Vision",
+    "visionMain1": "Engineering",
+    "visionMain2": "Perfect Light",
+    "ceoMessage": "We don't just sell equipment; we provide the precision needed to advance human industry. Efficiency, accuracy, and innovation are the pillars of Lichtzen's optical expertise.",
+    "ceoLabel": "Lichtzen CEO & Founders",
+    "rndTitle": "Technological Frontier",
+    "rndDesc": "Seoul Optical R&D Center Since 2010",
+    "timelineHeading": "A Decade of Optical Excellence",
+    "timeline": {
+      "2010": "Lichtzen Established (Specializing in UV/IR Optical Systems)",
+      "2013": "Venture Company Certification & ISO 9001/14001 Acquisition",
+      "2016": "Establishment of Corporate R&D Center (Optical Physics Lab)",
+      "2019": "Development of High-Efficiency MIR Drying System for EV Batteries",
+      "2022": "Global Export Expansion (Exceeding $10M in Annual Revenue)",
+      "2024": "Next-Gen Intelligent UV Curing Platform Launch"
+    },
+    "values": {
+      "precision": "Nano-scale accuracy in light distribution control.",
+      "sustainability": "Eco-friendly curing with minimal energy consumption.",
+      "innovation": "Leading the future of display and battery manufacturing."
+    }
+  },
+  "Applications": {
+    "title": "Industrial Applications",
+    "desc": "Leading optical solutions for the world's most demanding manufacturing processes.",
+    "battery": {
+      "name": "Secondary Battery",
+      "title": "Electrode Drying Solution",
+      "desc": "Our MIR system provides deep-penetration drying for thick electrodes, increasing production speed by 40% and reducing energy costs.",
+      "feat1": "Fast Solvent Evaporation",
+      "feat2": "Active Mass Stabilization",
+      "feat3": "Energy Efficiency (IR + Convection)"
+    },
+    "oled": {
+      "name": "OLED / Display",
+      "title": "Precision UV Sealing",
+      "desc": "Ensuring zero organic degradation with ultra-narrow wave control and precision cooling systems for OLED encapsulation.",
+      "feat1": "Zero Heat Damage",
+      "feat2": "Ultra-Uniform Irradiation",
+      "feat3": "High-Speed Curing"
+    }
+  },
+  "Products": {
+    "uvRoll": {
+      "title": "UV Roll-to-Roll System",
+      "desc": "Optimized for high-speed continuous processes with extreme uniformity.",
+      "specTitle": "Specifications",
+      "spec1": "Web Width",
+      "spec2": "Speed",
+      "spec3": "Uniformity"
+    },
+    "mirSystem": {
+      "title": "MIR Drying System",
+      "desc": "Medium-wave Infrared solution for deep and efficient electrode drying.",
+      "specTitle": "Key Specifications",
+      "spec1": "Peak Wavelength",
+      "spec2": "Heat Efficiency",
+      "spec3": "Response Time"
+    }
+  }
+}
