@@ -74,9 +74,18 @@ export default function Header() {
                 </Link>
               </div>
             </div>
-            <button className="text-xs font-bold uppercase tracking-widest bg-white text-brand-navy px-6 py-2 rounded-full hover:bg-brand-cyan transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+            <Link 
+              href="/support"
+              className="text-xs font-bold uppercase tracking-widest bg-white text-brand-navy px-6 py-2 rounded-full hover:bg-brand-cyan transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] flex items-center justify-center"
+              onClick={(e) => {
+                if (pathname === '/support') {
+                  e.preventDefault();
+                  document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
               {t('contact')}
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -120,9 +129,21 @@ export default function Header() {
                 <Link href={pathname as any} locale="ko" className={locale === 'ko' ? 'text-brand-cyan' : 'text-slate-600'}>KOREAN</Link>
                 <Link href={pathname as any} locale="en" className={locale === 'en' ? 'text-brand-cyan' : 'text-slate-600'}>ENGLISH</Link>
               </div>
-              <button className="w-full py-6 bg-brand-violet text-white font-bold text-xl rounded-2xl shadow-2xl">
+              <Link 
+                href="/support"
+                className="w-full py-6 bg-brand-violet text-white font-bold text-xl rounded-2xl shadow-2xl flex items-center justify-center"
+                onClick={(e) => {
+                  setIsMobileMenuOpen(false);
+                  if (pathname === '/support') {
+                    e.preventDefault();
+                    setTimeout(() => {
+                      document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 300);
+                  }
+                }}
+              >
                 {t('contact')}
-              </button>
+              </Link>
             </div>
           </motion.div>
         )}
