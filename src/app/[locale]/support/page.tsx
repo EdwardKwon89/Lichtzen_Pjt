@@ -9,6 +9,19 @@ import { Send, Mail, Shield, MessageSquare, ShieldCheck, X, ArrowRight, CheckCir
 import { useRouter, useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
+interface Inquiry {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  topic: string;
+  status: "unread" | "responded" | "waiting";
+  messages: any[];
+  createdAt: any;
+  userId?: string;
+  message?: string;
+}
+
 interface InquirySummary {
   id: string;
   name: string;
@@ -114,24 +127,29 @@ export default function SupportPage() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUpdating(true);
-    const result = await updateInquiry(editingData.id, {
-      title: editingData.title,
-      topic: editingData.topic,
-      phone: editingData.phone,
-      message: editingData.message
-    });
-    if (result.success) {
-      alert("Updated successfully.");
-      setIsEditing(false); // Back to view mode
-      // Refresh editingData with updated message
-      setEditingData(prev => ({
-        ...prev,
-        messages: prev.messages.map((msg, i) => i === 0 ? { ...msg, content: editingData.message } : msg)
-      }));
-    } else {
-      alert(result.error);
+    try {
+      const result = await updateInquiry(editingData.id, {
+        title: editingData.title,
+        topic: editingData.topic,
+        phone: editingData.phone,
+        message: editingData.message,
+      });
+
+      if (result.success && result.newMessage) {
+        // 즉시 로컬 상태 갱신하여 화면 반영
+        setEditingData(prev => ({
+          ...prev,
+          messages: [...prev.messages, result.newMessage]
+        }));
+        setIsEditing(false);
+      } else {
+        alert(result.error || "Update failed");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsUpdating(false);
     }
-    setIsUpdating(false);
   };
 
   return (
@@ -344,15 +362,18 @@ export default function SupportPage() {
               <div className="flex-1 overflow-y-auto px-10 pb-10 space-y-8 custom-scrollbar">
                 {/* Conversation History */}
                 <div className="space-y-6">
-                  {editingData.messages.map((msg: any, index: number) => (
-                    <div key={index} className={`flex flex-col ${msg.role === "admin" ? "items-start" : "items-end"}`}>
-                      <div className="flex items-center gap-2 mb-2">
+                  {/* 최신순 정렬 적용 (메시지 목록을 위에서부터 최신 메시지가 오도록 렌더링) */}
+                  {[...(editingData.messages || [])].reverse().map((msg: any, index: number, arr: any[]) => (
+                    <div key={index} className={`flex flex-col ${msg.role === "admin" ? "items-end" : "items-start"}`}>
+                      <div className={`flex items-center gap-2 mb-2 ${msg.role === "admin" ? "flex-row-reverse" : ""}`}>
                          <span className={`text-[10px] font-bold uppercase tracking-widest ${msg.role === "admin" ? "text-brand-cyan" : "text-brand-violet"}`}>
-                            {msg.role === "admin" ? t("detail.officialResponse") : t("formTitle")}
+                            {msg.role === "admin" ? t("detail.officialResponse") : (index === arr.length - 1 ? t("formTitle") : "Additional Inquiry")}
                          </span>
                          <span className="text-slate-700 text-[10px]">/</span>
                          <span className="text-slate-500 text-[10px] font-mono">
-                            {new Date(msg.createdAt?.seconds * 1000 || Date.now()).toLocaleString()}
+                            {msg.createdAt?.seconds 
+                              ? new Date(msg.createdAt.seconds * 1000).toLocaleString() 
+                              : (msg.createdAt instanceof Date ? msg.createdAt.toLocaleString() : new Date().toLocaleString())}
                          </span>
                       </div>
                       
@@ -393,13 +414,13 @@ export default function SupportPage() {
                           </div>
                         </div>
                       ) : (
-                        <div className={`p-6 rounded-3xl text-sm leading-relaxed max-w-[90%] ${
-                          msg.role === "admin" ? "bg-brand-cyan/5 border border-brand-cyan/20 text-brand-cyan/90 border-l-4 border-l-brand-cyan" : "bg-white/5 border border-white/10 text-slate-300"
+                        <div className={`px-4 py-2.5 rounded-3xl text-xs leading-relaxed w-[95%] shadow-xl ${
+                          msg.role === "admin" ? "bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan/90 border-r-4 border-r-brand-cyan" : "bg-white/5 border border-white/10 text-slate-300"
                         }`}>
                           {msg.role === "admin" && (
-                            <div className="flex items-center gap-2 mb-3 pb-3 border-b border-brand-cyan/10">
-                              <ShieldCheck className="w-4 h-4" />
-                              <span className="font-bold text-[10px] uppercase tracking-tighter">{t("detail.officialResponse")}</span>
+                            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-brand-cyan/10">
+                              <ShieldCheck className="w-3.5 h-3.5" />
+                              <span className="font-bold text-[9px] uppercase tracking-tighter">{t("detail.officialResponse")}</span>
                             </div>
                           )}
                           <p className="whitespace-pre-wrap">{msg.content}</p>

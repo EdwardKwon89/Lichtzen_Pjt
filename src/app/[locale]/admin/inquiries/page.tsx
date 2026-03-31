@@ -28,6 +28,7 @@ interface Inquiry {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   topic: string;
   status: "unread" | "responded" | "waiting";
   messages: any[];
@@ -91,7 +92,20 @@ function InquiriesContent() {
     
     setSending(true);
     try {
-      await addInquiryMessage(selectedInquiry.id, replyText, "admin");
+      const result = await addInquiryMessage(selectedInquiry.id, replyText, "admin");
+      
+      const newMessage = {
+        role: "admin",
+        content: replyText,
+        createdAt: { toDate: () => new Date() }
+      };
+      
+      setSelectedInquiry(prev => prev ? {
+        ...prev,
+        status: "responded",
+        messages: [...(prev.messages || []), newMessage]
+      } : null);
+      
       setReplyText("");
     } catch (err) {
       console.error("Reply error:", err);
@@ -221,60 +235,54 @@ function InquiriesContent() {
                 exit={{ opacity: 0, x: -20 }}
                 className="flex-1 flex flex-col min-h-0"
               >
-                <div className="p-6 border-b border-white/5 bg-white/[0.02] flex justify-between items-center">
+                <div className="p-4 border-b border-white/5 bg-white/[0.02] flex flex-wrap justify-between items-center gap-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-brand-violet/20 flex items-center justify-center text-brand-violet">
-                      <User className="w-6 h-6" />
+                    <div className="w-10 h-10 rounded-xl bg-brand-violet/20 flex items-center justify-center text-brand-violet shrink-0">
+                      <User className="w-5 h-5" />
                     </div>
-                    <div>
-                      <h3 className="text-white font-bold text-lg">{selectedInquiry.name}</h3>
-                      <p className="text-slate-500 text-xs flex items-center gap-2">
-                        <Mail className="w-3 h-3" /> {selectedInquiry.email}
-                      </p>
+                    <div className="min-w-0">
+                      <h3 className="text-white font-bold text-base truncate">{selectedInquiry.name}</h3>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
+                        <p className="text-slate-500 text-[10px] flex items-center gap-1.5">
+                          <Mail className="w-3 h-3" /> {selectedInquiry.email}
+                        </p>
+                        {selectedInquiry.phone && (
+                          <p className="text-slate-500 text-[10px] flex items-center gap-1.5 border-l border-white/10 pl-3">
+                            <Phone className="w-3 h-3" /> {selectedInquiry.phone}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all border border-white/5">
-                      <Phone className="w-4 h-4" />
+                    <button className="p-2 bg-white/5 hover:bg-white/10 text-white rounded-lg transition-all border border-white/5">
+                      <Phone className="w-3.5 h-3.5" />
                     </button>
-                    <button className="p-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all border border-white/5">
-                      <MoreVertical className="w-4 h-4" />
+                    <button className="p-2 bg-white/5 hover:bg-white/10 text-white rounded-lg transition-all border border-white/5">
+                      <MoreVertical className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-8 space-y-8">
-                  <div className="flex gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md flex items-center gap-2">
-                          <MessageSquare className="w-3 h-3" /> Original Inquiry
-                        </span>
-                        <span className="text-[10px] font-mono text-slate-600">
-                          {selectedInquiry.createdAt?.toDate ? selectedInquiry.createdAt.toDate().toLocaleString() : ""}
-                        </span>
-                      </div>
-                      <div className="bg-white/5 border border-white/5 p-6 rounded-2xl rounded-tl-none">
-                        <h4 className="text-brand-cyan font-bold mb-3 text-sm flex items-center gap-2">
-                          <Filter className="w-4 h-4" /> {selectedInquiry.topic}
-                        </h4>
-                        <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">
-                          {selectedInquiry.message}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {selectedInquiry.messages?.slice(1).map((msg: any, i: number) => (
-                    <div key={i} className={`flex gap-4 ${msg.role === "admin" ? "flex-row-reverse" : ""}`}>
-                      <div className="flex-1">
-                        <div className={`flex items-center gap-2 mb-3 ${msg.role === "admin" ? "flex-row-reverse" : ""}`}>
-                          <span className={`text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded-md ${msg.role === "admin" ? "bg-brand-cyan/20 text-brand-cyan" : "bg-white/5 text-slate-500"}`}>
-                            {msg.role === "admin" ? "Lichtzen Admin" : "User Response"}
+                <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                  {[...(selectedInquiry.messages || [])].reverse().map((msg: any, i: number, arr: any[]) => (
+                    <div key={i} className={`flex gap-3 ${msg.role === "admin" ? "flex-row-reverse" : ""}`}>
+                      <div className="flex-1 max-w-[95%]">
+                        <div className={`flex items-center gap-2 mb-1.5 ${msg.role === "admin" ? "flex-row-reverse" : ""}`}>
+                          <span className={`text-[9px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded-md ${msg.role === "admin" ? "bg-brand-cyan/20 text-brand-cyan" : "bg-white/5 text-slate-500"}`}>
+                            {msg.role === "admin" ? "Lichtzen Admin" : (i === arr.length - 1 ? "Original Inquiry" : "User Response")}
+                          </span>
+                          <span className="text-[9px] font-mono text-slate-600">
+                             {msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleString() : ""}
                           </span>
                         </div>
-                        <div className={`p-6 rounded-2xl border ${msg.role === "admin" ? "bg-brand-cyan/10 border-brand-cyan/20 rounded-tr-none" : "bg-white/5 border-white/5 rounded-tl-none"}`}>
-                          <p className={`text-sm leading-relaxed ${msg.role === "admin" ? "text-slate-200 font-medium" : "text-slate-400"}`}>
+                        <div className={`px-4 py-2.5 rounded-2xl border ${msg.role === "admin" ? "bg-brand-cyan/10 border-brand-cyan/20 rounded-tr-none" : "bg-white/5 border-white/5 rounded-tl-none"}`}>
+                          {i === arr.length - 1 && msg.role !== "admin" && (
+                            <h4 className="text-brand-cyan font-bold mb-2 text-xs flex items-center gap-2">
+                              <Filter className="w-3 h-3" /> {selectedInquiry.topic}
+                            </h4>
+                          )}
+                          <p className={`text-xs leading-relaxed ${msg.role === "admin" ? "text-slate-200 font-medium" : "text-slate-300"}`}>
                             {msg.content}
                           </p>
                         </div>

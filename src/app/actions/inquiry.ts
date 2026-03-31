@@ -128,25 +128,27 @@ export async function updateInquiry(id: string, updateData: {
     
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      const data = docSnap.data();
-      const messages = [...(data.messages || [])];
+      // 기존 방식(index 0 수정) 대신 새로운 메시지를 arrayUnion으로 추가하고 상태를 'waiting'으로 변경
+      const newMessage = {
+        role: "user" as const,
+        content: updateData.message,
+        createdAt: new Date(),
+      };
       
-      if (messages.length > 0 && messages[0].role === "user") {
-        messages[0].content = updateData.message;
-      }
-
       await updateDoc(docRef, {
         title: updateData.title,
         topic: updateData.topic,
         phone: updateData.phone,
-        messages: messages,
+        messages: arrayUnion(newMessage),
+        status: "waiting", // 재질의 시 상태를 '대기'로 전환
         updatedAt: serverTimestamp(),
       });
-    }
 
-    revalidatePath(`/support/${id}`);
-    revalidatePath("/admin/inquiries");
-    return { success: true };
+      revalidatePath(`/support/${id}`);
+      revalidatePath("/admin/inquiries");
+      return { success: true, newMessage };
+    }
+    return { error: "존재하지 않는 문의입니다." };
   } catch (error: any) {
     console.error("Update Inquiry Error:", error);
     return { error: error.message || "수정 중 오류가 발생했습니다." };
