@@ -104,7 +104,7 @@ export async function getInquiry(id: string) {
         title: data.title,
         topic: data.topic,
         status: data.status,
-        message: data.messages?.[0]?.content || "",
+        messages: data.messages || [],
       }
     };
   } catch (error: any) {

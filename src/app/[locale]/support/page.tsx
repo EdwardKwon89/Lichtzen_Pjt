@@ -5,7 +5,7 @@ import { submitInquiry, verifyInquiryPassword, getInquiry, updateInquiry } from 
 import { db } from "@/lib/firebase";
 import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Lock, Eye, Clock, MessageSquare, ShieldCheck, X, ArrowRight, CheckCircle2, User, Phone, Tag, Type, Plus, ChevronLeft } from "lucide-react";
+import { Send, Mail, Shield, MessageSquare, ShieldCheck, X, ArrowRight, CheckCircle2, User, Phone, Tag, Type, Plus, ChevronLeft } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 
 interface InquirySummary {
@@ -22,9 +22,10 @@ export default function SupportPage() {
   const params = useParams();
   const locale = params.locale as string;
 
-  // View State
-  const [viewMode, setViewMode] = useState<"list" | "create">("list");
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  // View State (Replaced viewMode with Modals)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   
   // Data States
   const [inquiries, setInquiries] = useState<InquirySummary[]>([]);
@@ -41,8 +42,10 @@ export default function SupportPage() {
   const [inquiryPassword, setInquiryPassword] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [verifyError, setVerifyError] = useState("");
-  const [editingData, setEditingData] = useState({
-    id: "", title: "", topic: "", phone: "", message: ""
+  const [editingData, setEditingData] = useState<{
+    id: string; title: string; topic: string; phone: string; message: string; messages: any[]
+  }>({
+    id: "", title: "", topic: "", phone: "", message: "", messages: []
   });
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -70,7 +73,7 @@ export default function SupportPage() {
     if (result.success) {
       alert("Inquiry submitted successfully.");
       setFormData({ name: "", email: "", phone: "", title: "", topic: "Product Inquiry", message: "", password: "" });
-      setViewMode("list");
+      setIsCreateModalOpen(false);
     } else {
       alert(result.error);
     }
@@ -83,7 +86,7 @@ export default function SupportPage() {
     setVerifyError("");
     const result = await verifyInquiryPassword(selectedId!, inquiryPassword.trim());
     if (result.success) {
-      // Fetch full inquiry data for editing
+      // Fetch full inquiry data for viewing
       const res = await getInquiry(selectedId!);
       if (res.success && res.data) {
         setEditingData({
@@ -91,9 +94,11 @@ export default function SupportPage() {
           title: res.data.title,
           topic: res.data.topic,
           phone: res.data.phone || "",
-          message: res.data.message
+          message: res.data.messages[0]?.content || "",
+          messages: res.data.messages || []
         });
-        setIsEditModalOpen(true);
+        setIsEditing(false); // Start in View-only mode
+        setIsDetailModalOpen(true);
         setSelectedId(null); // Close password modal
       } else {
         setVerifyError(res.error || "Failed to load inquiry data.");
@@ -115,7 +120,12 @@ export default function SupportPage() {
     });
     if (result.success) {
       alert("Updated successfully.");
-      setIsEditModalOpen(false);
+      setIsEditing(false); // Back to view mode
+      // Refresh editingData with updated message
+      setEditingData(prev => ({
+        ...prev,
+        messages: prev.messages.map((msg, i) => i === 0 ? { ...msg, content: editingData.message } : msg)
+      }));
     } else {
       alert(result.error);
     }
@@ -130,129 +140,116 @@ export default function SupportPage() {
       </header>
 
       {/* Main Container */}
-      <div className="relative min-h-[600px]">
-        <AnimatePresence mode="wait">
-          {viewMode === "list" ? (
-            <motion.div 
-              key="list"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-6"
+      <div className="relative">
+        <div className="space-y-6">
+          <div className="flex justify-between items-end pb-2">
+            <div className="flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-brand-cyan rounded-full animate-pulse" />
+              <h2 className="text-lg font-bold text-white tracking-tight">Recent Inquiries</h2>
+            </div>
+            <button 
+              onClick={() => setIsCreateModalOpen(true)}
+              className="flex items-center gap-2 px-6 py-2.5 bg-white text-black text-xs font-bold rounded-xl hover:bg-slate-200 transition-all active:scale-95 shadow-lg shadow-white/5"
             >
-              <div className="flex justify-between items-end pb-2">
-                <div className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 bg-brand-cyan rounded-full animate-pulse" />
-                  <h2 className="text-lg font-bold text-white tracking-tight">Recent Inquiries</h2>
-                </div>
-                <button 
-                  onClick={() => setViewMode("create")}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-white text-black text-xs font-bold rounded-xl hover:bg-slate-200 transition-all active:scale-95 shadow-lg shadow-white/5"
+              <Plus className="w-4 h-4" /> New Inquiry
+            </button>
+          </div>
+
+          {loading ? (
+            <div className="h-64 flex items-center justify-center bg-white/5 rounded-3xl border border-white/5">
+              <div className="w-6 h-6 border-b-2 border-brand-cyan rounded-full animate-spin" />
+            </div>
+          ) : inquiries.length === 0 ? (
+            <div className="h-64 flex flex-col items-center justify-center bg-white/[0.02] rounded-3xl border border-dashed border-white/10 opacity-50">
+               <MessageSquare className="w-10 h-10 mb-4 text-slate-700" />
+               <p className="text-slate-500 text-sm">No inquiries yet.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-2.5 overflow-hidden">
+              {inquiries.map((inquiry) => (
+                <motion.div 
+                  key={inquiry.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ x: 5, backgroundColor: "rgba(255,255,255,0.06)" }}
+                  onClick={() => {
+                    setSelectedId(inquiry.id);
+                    setInquiryPassword("");
+                    setVerifyError("");
+                  }}
+                  className="p-5 pl-7 bg-white/[0.03] border border-white/5 hover:border-white/20 rounded-2xl cursor-pointer transition-all flex justify-between items-center group relative overflow-hidden"
                 >
-                  <Plus className="w-4 h-4" /> New Inquiry
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-brand-violet opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="flex-1 min-w-0 pr-6">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] font-bold py-0.5 px-2 bg-brand-violet/10 text-brand-violet rounded-md border border-brand-violet/20">{inquiry.topic}</span>
+                      <span className="text-slate-700 font-serif text-[10px]">/</span>
+                      <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{inquiry.name}</span>
+                    </div>
+                    <h3 className="text-sm font-bold text-white group-hover:text-brand-cyan transition-colors truncate">{inquiry.title}</h3>
+                  </div>
+                  
+                  <div className="flex items-center gap-6 shrink-0">
+                     <div className="flex flex-col items-end">
+                        <span className={`px-2 py-0.5 text-[9px] font-extrabold rounded-md uppercase tracking-tight mb-1 ${
+                          inquiry.status === "responded" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-brand-violet/10 text-brand-violet border border-brand-violet/10"
+                        }`}>
+                          {inquiry.status}
+                        </span>
+                     </div>
+                     <ArrowRight className="w-4 h-4 text-slate-800 group-hover:text-white transition-colors" />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* New Inquiry Pop-Up Modal */}
+      <AnimatePresence>
+        {isCreateModalOpen && (
+          <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsCreateModalOpen(false)} className="fixed inset-0 bg-black/95 backdrop-blur-sm z-[200]" />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="fixed inset-x-6 top-10 bottom-10 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-[800px] bg-slate-950 border border-white/10 rounded-[40px] shadow-3xl z-[201] p-1 overflow-hidden flex flex-col">
+              <div className="px-10 pt-10 pb-6 flex justify-between items-start shrink-0">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-brand-cyan rounded-full animate-pulse" />
+                  <h2 className="text-2xl font-bold text-white">New Inquiry</h2>
+                </div>
+                <button onClick={() => setIsCreateModalOpen(false)} className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors">
+                  <X className="w-5 h-5 text-slate-400" />
                 </button>
               </div>
 
-              {loading ? (
-                <div className="h-64 flex items-center justify-center bg-white/5 rounded-3xl border border-white/5">
-                  <div className="w-6 h-6 border-b-2 border-brand-cyan rounded-full animate-spin" />
-                </div>
-              ) : inquiries.length === 0 ? (
-                <div className="h-64 flex flex-col items-center justify-center bg-white/[0.02] rounded-3xl border border-dashed border-white/10 opacity-50">
-                   <MessageSquare className="w-10 h-10 mb-4 text-slate-700" />
-                   <p className="text-slate-500 text-sm">No inquiries yet.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-2.5 overflow-hidden">
-                  {inquiries.map((inquiry) => (
-                    <motion.div 
-                      key={inquiry.id}
-                      whileHover={{ x: 5, backgroundColor: "rgba(255,255,255,0.06)" }}
-                      onClick={() => {
-                        setSelectedId(inquiry.id);
-                        setInquiryPassword("");
-                        setVerifyError("");
-                      }}
-                      className="p-5 pl-7 bg-white/[0.03] border border-white/5 hover:border-white/20 rounded-2xl cursor-pointer transition-all flex justify-between items-center group relative overflow-hidden"
-                    >
-                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-brand-violet opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <div className="flex-1 min-w-0 pr-6">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-[10px] font-bold py-0.5 px-2 bg-brand-violet/10 text-brand-violet rounded-md border border-brand-violet/20">{inquiry.topic}</span>
-                          <span className="text-slate-700 font-serif text-[10px]">/</span>
-                          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{inquiry.name}</span>
-                        </div>
-                        <h3 className="text-sm font-bold text-white group-hover:text-brand-cyan transition-colors truncate">{inquiry.title}</h3>
-                      </div>
-                      
-                      <div className="flex items-center gap-6 shrink-0">
-                         <div className="flex flex-col items-end">
-                            <span className={`px-2 py-0.5 text-[9px] font-extrabold rounded-md uppercase tracking-tight mb-1 ${
-                              inquiry.status === "responded" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-brand-violet/10 text-brand-violet border border-brand-violet/10"
-                            }`}>
-                              {inquiry.status}
-                            </span>
-                         </div>
-                         <ArrowRight className="w-4 h-4 text-slate-800 group-hover:text-white transition-colors" />
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          ) : (
-            <motion.div 
-              key="create"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="max-w-3xl mx-auto"
-            >
-              <button 
-                onClick={() => setViewMode("list")}
-                className="mb-8 flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest"
-              >
-                <ChevronLeft className="w-4 h-4" /> Back to Inquiries
-              </button>
-
-              <form onSubmit={handleSubmit} className="p-10 bg-white/[0.03] border border-white/5 rounded-3xl space-y-6 shadow-3xl backdrop-blur-3xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
-                   <Send className="w-32 h-32 text-white" />
-                </div>
-
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2 h-2 bg-brand-cyan rounded-full animate-pulse" />
-                  <h3 className="text-sm font-mono font-bold text-brand-cyan uppercase tracking-widest">New Inquiry Form</h3>
-                </div>
-
+              <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-10 pb-10 space-y-6 custom-scrollbar">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 pl-1">
-                      <User className="w-4 h-4 text-brand-cyan" /> Your Name
+                      <User className="w-4 h-4 text-brand-violet" /> Requester Name
                     </label>
-                    <input required placeholder="Full Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan/30 transition-all placeholder:text-slate-700" />
+                    <input required placeholder="Full Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-violet/30 transition-all placeholder:text-slate-700" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 pl-1">
-                      <Lock className="w-4 h-4 text-brand-violet" /> Security Password
+                      <Mail className="w-4 h-4 text-brand-cyan" /> Email Address
                     </label>
-                    <input required type="password" placeholder="Min 4 chars" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-violet/30 transition-all placeholder:text-slate-700" />
+                    <input required type="email" placeholder="email@example.com" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan/30 transition-all placeholder:text-slate-700" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 pl-1">
-                      <MessageSquare className="w-4 h-4 text-brand-cyan" /> Email Address
-                    </label>
-                    <input required type="email" placeholder="your@email.com" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan/30 transition-all placeholder:text-slate-700" />
-                  </div>
                   <div className="space-y-2">
                     <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 pl-1">
                       <Phone className="w-4 h-4 text-brand-cyan" /> Phone Number
                     </label>
                     <input placeholder="010-0000-0000" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan/30 transition-all placeholder:text-slate-700" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 pl-1">
+                      <Shield className="w-4 h-4 text-brand-violet" /> Verification Password (4 digits)
+                    </label>
+                    <input required type="password" maxLength={4} pattern="[0-9]*" inputMode="numeric" placeholder="····" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-violet/30 transition-all placeholder:text-slate-700 tracking-widest font-mono" />
                   </div>
                 </div>
 
@@ -289,9 +286,9 @@ export default function SupportPage() {
                 </button>
               </form>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Password Modal */}
       <AnimatePresence>
@@ -319,56 +316,97 @@ export default function SupportPage() {
         )}
       </AnimatePresence>
 
-      {/* Edit Pop-Up Modal */}
+      {/* Detail / Edit Pop-Up Modal */}
       <AnimatePresence>
-        {isEditModalOpen && (
+        {isDetailModalOpen && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsEditModalOpen(false)} className="fixed inset-0 bg-black/95 z-[200]" />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsDetailModalOpen(false)} className="fixed inset-0 bg-black/95 z-[200]" />
             <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }} className="fixed inset-x-6 top-10 bottom-10 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-[700px] bg-slate-950 border border-white/10 rounded-[40px] shadow-3xl z-[201] p-1 overflow-hidden flex flex-col">
               <div className="px-10 pt-10 pb-6 flex justify-between items-start shrink-0">
                 <div>
-                   <h2 className="text-2xl font-bold text-white mb-1">Edit Inquiry</h2>
+                   <h2 className="text-2xl font-bold text-white mb-1">{isEditing ? "Edit Inquiry" : "Inquiry Details"}</h2>
                    <p className="text-slate-500 text-[11px] uppercase tracking-widest font-mono">Inquiry Management</p>
                 </div>
-                <button onClick={() => setIsEditModalOpen(false)} className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors">
-                  <X className="w-5 h-5 text-slate-400" />
-                </button>
-              </div>
-
-              <form onSubmit={handleUpdate} className="flex-1 overflow-y-auto px-10 pb-10 space-y-6 custom-scrollbar">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Inquiry Title</label>
-                  <input required value={editingData.title} onChange={(e) => setEditingData({...editingData, title: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all" />
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Category</label>
-                    <select value={editingData.topic} onChange={(e) => setEditingData({...editingData, topic: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all appearance-none">
-                      <option value="Product Inquiry">Product Inquiry</option>
-                      <option value="Technical Support">Technical Support</option>
-                      <option value="Quotation">Request Quote</option>
-                      <option value="Others">Others</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Phone Number</label>
-                    <input value={editingData.phone} onChange={(e) => setEditingData({...editingData, phone: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all" />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Inquiry Message</label>
-                  <textarea required rows={10} value={editingData.message} onChange={(e) => setEditingData({...editingData, message: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all resize-none font-sans leading-relaxed" />
-                </div>
-
-                <div className="pt-4 sticky bottom-0 bg-slate-950 pb-2">
-                  <button disabled={isUpdating} className="w-full bg-brand-violet text-white font-extrabold py-4 rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 text-xs tracking-widest uppercase shadow-xl shadow-brand-violet/20">
-                    {isUpdating ? "Saving..." : "Update Inquiry Information"}
-                    <CheckCircle2 className="w-4 h-4" />
+                <div className="flex items-center gap-2">
+                  {!isEditing && (
+                    <button onClick={() => setIsEditing(true)} className="flex items-center gap-2 px-4 py-2 bg-brand-violet/20 text-brand-violet text-[10px] font-bold rounded-lg border border-brand-violet/30 hover:bg-brand-violet/30 transition-colors">
+                      Edit
+                    </button>
+                  )}
+                  <button onClick={() => setIsDetailModalOpen(false)} className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors">
+                    <X className="w-5 h-5 text-slate-400" />
                   </button>
                 </div>
-              </form>
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-10 pb-10 space-y-8 custom-scrollbar">
+                {/* Conversation History */}
+                <div className="space-y-6">
+                  {editingData.messages.map((msg: any, index: number) => (
+                    <div key={index} className={`flex flex-col ${msg.role === "admin" ? "items-start" : "items-end"}`}>
+                      <div className="flex items-center gap-2 mb-2">
+                         <span className={`text-[10px] font-bold uppercase tracking-widest ${msg.role === "admin" ? "text-brand-cyan" : "text-brand-violet"}`}>
+                            {msg.role === "admin" ? "Admin Response" : "Original Inquiry"}
+                         </span>
+                         <span className="text-slate-700 text-[10px]">/</span>
+                         <span className="text-slate-500 text-[10px] font-mono">
+                            {new Date(msg.createdAt?.seconds * 1000 || Date.now()).toLocaleString()}
+                         </span>
+                      </div>
+                      
+                      {isEditing && msg.role === "user" && index === 0 ? (
+                        <div className="w-full space-y-6 bg-white/[0.02] p-6 rounded-3xl border border-white/5">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Inquiry Title</label>
+                            <input required value={editingData.title} onChange={(e) => setEditingData({...editingData, title: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all" />
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Category</label>
+                              <select value={editingData.topic} onChange={(e) => setEditingData({...editingData, topic: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all appearance-none">
+                                <option value="Product Inquiry">Product Inquiry</option>
+                                <option value="Technical Support">Technical Support</option>
+                                <option value="Quotation">Request Quote</option>
+                                <option value="Others">Others</option>
+                              </select>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Phone Number</label>
+                              <input value={editingData.phone} onChange={(e) => setEditingData({...editingData, phone: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Inquiry Message</label>
+                            <textarea required rows={8} value={editingData.message} onChange={(e) => setEditingData({...editingData, message: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all resize-none font-sans leading-relaxed" />
+                          </div>
+
+                          <div className="flex gap-4">
+                            <button onClick={() => setIsEditing(false)} className="flex-1 py-4 text-slate-500 font-bold hover:text-white transition-colors text-[10px] uppercase tracking-widest">Cancel</button>
+                            <button onClick={(e) => handleUpdate(e as any)} disabled={isUpdating} className="flex-[2] bg-brand-violet text-white font-extrabold py-4 rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 text-[10px] tracking-widest uppercase shadow-xl shadow-brand-violet/20">
+                              {isUpdating ? "Saving..." : "Save Changes"}
+                              <CheckCircle2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className={`p-6 rounded-3xl text-sm leading-relaxed max-w-[90%] ${
+                          msg.role === "admin" ? "bg-brand-cyan/5 border border-brand-cyan/20 text-brand-cyan/90 border-l-4 border-l-brand-cyan" : "bg-white/5 border border-white/10 text-slate-300"
+                        }`}>
+                          {msg.role === "admin" && (
+                            <div className="flex items-center gap-2 mb-3 pb-3 border-b border-brand-cyan/10">
+                              <ShieldCheck className="w-4 h-4" />
+                              <span className="font-bold text-[10px] uppercase tracking-tighter">Official Response</span>
+                            </div>
+                          )}
+                          <p className="whitespace-pre-wrap">{msg.content}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </motion.div>
           </>
         )}
