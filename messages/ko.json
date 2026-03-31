@@ -116,21 +116,87 @@
     }
   },
   "Products": {
-    "uvRoll": {
-      "title": "UV 롤투롤 시스템",
-      "desc": "높은 균일도로 고속 연속 공정에 최적화된 시스템.",
+    "list": {
+      "title": "제품 라인업",
+      "desc": "UV 경화 및 MIR 건조 공정의 한계를 돌파하는 리트젠의 정밀 광학 솔루션입니다.",
+      "categories": {
+        "led": "UV LED 시스템",
+        "lamp": "UV 램프 시스템",
+        "mir": "MIR 광학 시스템",
+        "instrument": "측정 및 부품"
+      }
+    },
+    "ls4": {
+      "category": "led",
+      "title": "Spot UV LED (LS4)",
+      "desc": "고정밀 카메라 모듈 및 센서 조립을 위한 정밀 경화기.",
       "specTitle": "주요 사양",
-      "spec1": "웹 폭 (Web Width)",
-      "spec2": "공정 속도 (Speed)",
-      "spec3": "조사 균일도 (Uniformity)"
+      "spec1": "파장: 365 / 385 / 395 / 405 nm",
+      "spec2": "조사 강도: 최대 16W/cm²",
+      "spec3": "수명: 20,000시간 이상"
+    },
+    "lba": {
+      "category": "led",
+      "title": "Area UV LED (LBA)",
+      "desc": "대면적 디스플레이 및 표면 처리를 위한 균일 조사 시스템.",
+      "specTitle": "주요 사양",
+      "spec1": "조사 면적: 맞춤형 설계 가능",
+      "spec2": "균일도: 95% 이상 (Area)",
+      "spec3": "냉각 방식: 고성능 수냉/공랭"
+    },
+    "innocure": {
+      "category": "lamp",
+      "title": "InnoCure Series",
+      "desc": "램프 방식의 고출력 스팟 큐어링 시스템.",
+      "specTitle": "주요 사양",
+      "spec1": "출력: 200W / 500W급",
+      "spec2": "파장 필터: 선택적 파장 투과",
+      "spec3": "컨트롤: 디지털 정밀 타이머"
+    },
+    "conveyor": {
+      "category": "lamp",
+      "title": "UV Conveyor System",
+      "desc": "자동화 라인용 연속 공정 경화 시스템.",
+      "specTitle": "주요 사양",
+      "spec1": "벨트 폭: 200 ~ 600mm",
+      "spec2": "속도: 1 ~ 30m/min 가변",
+      "spec3": "높이 조절: 정밀 헤드 높이 제어"
+    },
+    "uvRoll": {
+      "category": "lamp",
+      "title": "UV 롤투롤 시스템",
+      "desc": "필름 및 연속 기재 공정에 최적화된 고속 시스템.",
+      "specTitle": "주요 사양",
+      "spec1": "웹 폭: 최대 1,600mm",
+      "spec2": "공정 속도: 150m/min 이상",
+      "spec3": "자동화: 장력/사행 제어 연동"
     },
     "mirSystem": {
+      "category": "mir",
       "title": "MIR 건조 시스템",
-      "desc": "전극의 심부까지 효율적인 건조를 위한 중단파 적외선 솔루션.",
-      "specTitle": "핵심 사양",
-      "spec1": "피크 파장 (Peak Wavelength)",
-      "spec2": "가열 효율",
-      "spec3": "응답 시간"
+      "desc": "이차전지 전극의 심부 건조를 위한 중적외선 솔루션.",
+      "specTitle": "주요 사양",
+      "spec1": "피크 파장: 2.0 ~ 6.0 μm",
+      "spec2": "에너지 절감: 기존 대비 50% 이상",
+      "spec3": "건조 속도: 기존 대비 40% 향상"
+    },
+    "radiometer": {
+      "category": "instrument",
+      "title": "UV Radiometer",
+      "desc": "UV 강도 및 누적 광량 정밀 측정기.",
+      "specTitle": "주요 사양",
+      "spec1": "측정 범위: UV-A, B, C, V",
+      "spec2": "소형화: 협소 공간 측정 가능",
+      "spec3": "데이터: 실시간 추이 기록"
+    },
+    "components": {
+      "category": "instrument",
+      "title": "Components & Others",
+      "desc": "시스템 성능을 극대화하는 광학 부품 및 전원 장치.",
+      "specTitle": "주요 품목",
+      "spec1": "고효율 반사갓 (Cold/Half)",
+      "spec2": "전자식 안정기 (Electronic Ballast)",
+      "spec3": "특수 광학 필터 (UV Filter)"
     }
   }
 }

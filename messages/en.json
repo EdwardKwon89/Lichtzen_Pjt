@@ -73,21 +73,87 @@
     }
   },
   "Products": {
+    "list": {
+      "title": "Product Lineup",
+      "desc": "Lichtzen's precision optical solutions breaking the limits of UV curing and MIR drying processes.",
+      "categories": {
+        "led": "UV LED Systems",
+        "lamp": "UV Lamp Systems",
+        "mir": "MIR Optical Systems",
+        "instrument": "Measuring & Components"
+      }
+    },
+    "ls4": {
+      "category": "led",
+      "title": "Spot UV LED (LS4)",
+      "desc": "Precision curing system for high-end camera modules and sensor assembly.",
+      "specTitle": "Key Specifications",
+      "spec1": "Wavelength: 365 / 385 / 395 / 405 nm",
+      "spec2": "Intensity: Up to 16W/cm²",
+      "spec3": "Lifetime: Over 20,000 hours"
+    },
+    "lba": {
+      "category": "led",
+      "title": "Area UV LED (LBA)",
+      "desc": "Uniform irradiation system for large-area displays and surface treatment.",
+      "specTitle": "Key Specifications",
+      "spec1": "Irradiation Area: Customizable",
+      "spec2": "Uniformity: Over 95% (Area)",
+      "spec3": "Cooling: High-performance Water/Air cooled"
+    },
+    "innocure": {
+      "category": "lamp",
+      "title": "InnoCure Series",
+      "desc": "High-intensity lamp-based spot curing systems.",
+      "specTitle": "Key Specifications",
+      "spec1": "Output: 200W / 500W Grade",
+      "spec2": "Filter: Selective wavelength transmission",
+      "spec3": "Control: Digital precision timer"
+    },
+    "conveyor": {
+      "category": "lamp",
+      "title": "UV Conveyor System",
+      "desc": "Continuous process curing system for automated production lines.",
+      "specTitle": "Key Specifications",
+      "spec1": "Belt Width: 200 ~ 600mm",
+      "spec2": "Speed: Variable 1 ~ 30m/min",
+      "spec3": "Height: Precision head height control"
+    },
     "uvRoll": {
-      "title": "UV Roll-to-Roll System",
-      "desc": "Optimized for high-speed continuous processes with extreme uniformity.",
-      "specTitle": "Specifications",
-      "spec1": "Web Width",
-      "spec2": "Speed",
-      "spec3": "Uniformity"
+      "category": "lamp",
+      "title": "UV Roll-to-Roll",
+      "desc": "High-speed system optimized for film and continuous substrate processes.",
+      "specTitle": "Key Specifications",
+      "spec1": "Web Width: Max 1,600mm",
+      "spec2": "Speed: Over 150m/min",
+      "spec3": "Automation: Tension/EPC integration"
     },
     "mirSystem": {
+      "category": "mir",
       "title": "MIR Drying System",
-      "desc": "Medium-wave Infrared solution for deep and efficient electrode drying.",
+      "desc": "Mid-infrared solution for deep drying of EV battery electrodes.",
       "specTitle": "Key Specifications",
-      "spec1": "Peak Wavelength",
-      "spec2": "Heat Efficiency",
-      "spec3": "Response Time"
+      "spec1": "Peak Wavelength: 2.0 ~ 6.0 μm",
+      "spec2": "Energy Saving: Over 50% vs conventional",
+      "spec3": "Drying Speed: 40% improvement"
+    },
+    "radiometer": {
+      "category": "instrument",
+      "title": "UV Radiometer",
+      "desc": "Precision measurement for UV intensity and accumulated dose.",
+      "specTitle": "Key Specifications",
+      "spec1": "Range: UV-A, B, C, V",
+      "spec2": "Compact: Measure in narrow spaces",
+      "spec3": "Data: Real-time trend recording"
+    },
+    "components": {
+      "category": "instrument",
+      "title": "Components & Others",
+      "desc": "Optical parts and power supplies that maximize system performance.",
+      "specTitle": "Main Items",
+      "spec1": "High-efficiency Reflector (Cold/Half)",
+      "spec2": "Electronic Ballast",
+      "spec3": "Special Optical Filter (UV Filter)"
     }
   },
   "Support": {

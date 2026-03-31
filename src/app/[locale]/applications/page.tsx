@@ -45,10 +45,12 @@ export default function ApplicationsPage() {
                     className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700"
                   />
                 ) : (
-                  <>
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand-violet/20 via-transparent to-brand-cyan/20 group-hover:scale-110 transition-transform duration-700" />
-                    <span className="text-8xl opacity-20 grayscale group-hover:grayscale-0 transition-all">📱</span>
-                  </>
+                  <Image 
+                    src="/images/applications/oled.png"
+                    alt="Precision OLED UV Bonding & Encapsulation"
+                    fill
+                    className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700"
+                  />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-r from-slate-900/40 to-transparent" />
               </div>
