@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { submitInquiry, verifyInquiryPassword, getInquiry, updateInquiry } from "@/app/actions/inquiry";
+import { serializeInquiryData } from "@/lib/firebaseUtils";
 import { db } from "@/lib/firebase";
 import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Mail, Shield, MessageSquare, ShieldCheck, X, ArrowRight, CheckCircle2, User, Phone, Tag, Type, Plus, ChevronLeft } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 
 interface Inquiry {
   id: string;
@@ -45,6 +47,8 @@ export default function SupportPage() {
   // Data States
   const [inquiries, setInquiries] = useState<InquirySummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   
   // Submit Form State
   const [formData, setFormData] = useState({ 
@@ -67,15 +71,11 @@ export default function SupportPage() {
   useEffect(() => {
     const q = query(collection(db, "inquiries"), orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
+      const list = snapshot.docs.map(doc => serializeInquiryData({
         id: doc.id,
-        name: doc.data().name,
-        title: doc.data().title || "No Title",
-        topic: doc.data().topic,
-        status: doc.data().status,
-        createdAt: doc.data().createdAt,
+        ...doc.data()
       })) as InquirySummary[];
-      setInquiries(data);
+      setInquiries(list);
       setLoading(false);
     });
     return () => unsubscribe();
@@ -152,6 +152,18 @@ export default function SupportPage() {
     }
   };
 
+  // Pagination Logic
+  const totalPages = Math.ceil(inquiries.length / pageSize);
+  const pagedInquiries = inquiries.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  // Reset page when pageSize changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [pageSize]);
+
   return (
     <div className="min-h-screen pt-24 pb-20 px-6 max-w-[1200px] mx-auto flex flex-col gap-10">
       <header className="text-center">
@@ -163,9 +175,23 @@ export default function SupportPage() {
       <div className="relative">
         <div className="space-y-6">
           <div className="flex justify-between items-end pb-2">
-            <div className="flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-brand-cyan rounded-full animate-pulse" />
-              <h2 className="text-lg font-bold text-white tracking-tight">Recent Inquiries</h2>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
+                <div className="w-1.5 h-1.5 bg-brand-cyan rounded-full animate-pulse" />
+                <h2 className="text-lg font-bold text-white tracking-tight">Recent Inquiries</h2>
+              </div>
+              
+              <div className="flex items-center gap-2 bg-white/5 p-1 rounded-xl border border-white/10 ml-4">
+                <select 
+                  value={pageSize} 
+                  onChange={(e) => setPageSize(Number(e.target.value))}
+                  className="bg-transparent text-white text-[10px] font-bold px-2 py-1 outline-none cursor-pointer"
+                >
+                  <option value={10} className="bg-slate-900">10 Rows</option>
+                  <option value={20} className="bg-slate-900">20 Rows</option>
+                  <option value={30} className="bg-slate-900">30 Rows</option>
+                </select>
+              </div>
             </div>
             <button 
               onClick={() => setIsCreateModalOpen(true)}
@@ -186,7 +212,7 @@ export default function SupportPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-2.5 overflow-hidden">
-              {inquiries.map((inquiry) => (
+              {pagedInquiries.map((inquiry) => (
                 <motion.div 
                   key={inquiry.id}
                   initial={{ opacity: 0, y: 10 }}
@@ -221,6 +247,40 @@ export default function SupportPage() {
                   </div>
                 </motion.div>
               ))}
+
+              {/* Pagination Navigation */}
+              {totalPages > 1 && (
+                <div className="mt-6 flex items-center justify-center gap-2">
+                  <button 
+                    disabled={currentPage === 1}
+                    onClick={(e) => { e.stopPropagation(); setCurrentPage(prev => prev - 1); }}
+                    className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white text-[10px] font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-all uppercase tracking-widest"
+                  >
+                    Prev
+                  </button>
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+                      <button
+                        key={num}
+                        onClick={(e) => { e.stopPropagation(); setCurrentPage(num); }}
+                        className={cn(
+                          "w-8 h-8 rounded-xl text-[10px] font-bold transition-all",
+                          currentPage === num ? "bg-brand-violet text-white" : "text-slate-500 hover:text-white"
+                        )}
+                      >
+                        {num}
+                      </button>
+                    ))}
+                  </div>
+                  <button 
+                    disabled={currentPage === totalPages}
+                    onClick={(e) => { e.stopPropagation(); setCurrentPage(prev => prev + 1); }}
+                    className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white text-[10px] font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-all uppercase tracking-widest"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -360,9 +420,54 @@ export default function SupportPage() {
               </div>
 
               <div className="flex-1 overflow-y-auto px-10 pb-10 space-y-8 custom-scrollbar">
+                {/* Edit Form (Fixed at top when editing) */}
+                <AnimatePresence mode="wait">
+                  {isEditing && (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="w-full space-y-6 bg-white/[0.02] p-6 rounded-3xl border border-white/5 mb-10 overflow-hidden"
+                    >
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Inquiry Title</label>
+                        <input required value={editingData.title} onChange={(e) => setEditingData({...editingData, title: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all" />
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Category</label>
+                          <select value={editingData.topic} onChange={(e) => setEditingData({...editingData, topic: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all appearance-none">
+                            <option value="Product Inquiry">Product Inquiry</option>
+                            <option value="Technical Support">Technical Support</option>
+                            <option value="Quotation">Request Quote</option>
+                            <option value="Others">Others</option>
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Phone Number</label>
+                          <input value={editingData.phone} onChange={(e) => setEditingData({...editingData, phone: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all" />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Inquiry Message</label>
+                        <textarea required rows={8} value={editingData.message} onChange={(e) => setEditingData({...editingData, message: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all resize-none font-sans leading-relaxed" />
+                      </div>
+
+                      <div className="flex gap-4">
+                        <button onClick={() => setIsEditing(false)} className="flex-1 py-4 text-slate-500 font-bold hover:text-white transition-colors text-[10px] uppercase tracking-widest">{t("detail.cancel")}</button>
+                        <button onClick={(e) => handleUpdate(e as any)} disabled={isUpdating} className="flex-[2] bg-brand-violet text-white font-extrabold py-4 rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 text-[10px] tracking-widest uppercase shadow-xl shadow-brand-violet/20">
+                          {isUpdating ? "..." : t("detail.saveChanges")}
+                          <CheckCircle2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 {/* Conversation History */}
                 <div className="space-y-6">
-                  {/* 최신순 정렬 적용 (메시지 목록을 위에서부터 최신 메시지가 오도록 렌더링) */}
                   {[...(editingData.messages || [])].reverse().map((msg: any, index: number, arr: any[]) => (
                     <div key={index} className={`flex flex-col ${msg.role === "admin" ? "items-end" : "items-start"}`}>
                       <div className={`flex items-center gap-2 mb-2 ${msg.role === "admin" ? "flex-row-reverse" : ""}`}>
@@ -373,59 +478,22 @@ export default function SupportPage() {
                          <span className="text-slate-500 text-[10px] font-mono">
                             {msg.createdAt?.seconds 
                               ? new Date(msg.createdAt.seconds * 1000).toLocaleString() 
-                              : (msg.createdAt instanceof Date ? msg.createdAt.toLocaleString() : new Date().toLocaleString())}
+                              : (typeof msg.createdAt === 'string' ? new Date(msg.createdAt).toLocaleString() : 
+                                (msg.createdAt instanceof Date ? msg.createdAt.toLocaleString() : new Date().toLocaleString()))}
                          </span>
                       </div>
                       
-                      {isEditing && msg.role === "user" && index === 0 ? (
-                        <div className="w-full space-y-6 bg-white/[0.02] p-6 rounded-3xl border border-white/5">
-                          <div className="space-y-2">
-                            <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Inquiry Title</label>
-                            <input required value={editingData.title} onChange={(e) => setEditingData({...editingData, title: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all" />
+                      <div className={`px-4 py-2.5 rounded-3xl text-xs leading-relaxed w-full shadow-xl ${
+                        msg.role === "admin" ? "bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan/90 border-r-4 border-r-brand-cyan" : "bg-white/5 border border-white/10 text-slate-300"
+                      }`}>
+                        {msg.role === "admin" && (
+                          <div className="flex items-center gap-2 mb-2 pb-2 border-b border-brand-cyan/10">
+                            <ShieldCheck className="w-3.5 h-3.5" />
+                            <span className="font-bold text-[9px] uppercase tracking-tighter">{t("detail.officialResponse")}</span>
                           </div>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                              <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Category</label>
-                              <select value={editingData.topic} onChange={(e) => setEditingData({...editingData, topic: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all appearance-none">
-                                <option value="Product Inquiry">Product Inquiry</option>
-                                <option value="Technical Support">Technical Support</option>
-                                <option value="Quotation">Request Quote</option>
-                                <option value="Others">Others</option>
-                              </select>
-                            </div>
-                            <div className="space-y-2">
-                              <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Phone Number</label>
-                              <input value={editingData.phone} onChange={(e) => setEditingData({...editingData, phone: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all" />
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 pl-1">Inquiry Message</label>
-                            <textarea required rows={8} value={editingData.message} onChange={(e) => setEditingData({...editingData, message: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-violet transition-all resize-none font-sans leading-relaxed" />
-                          </div>
-
-                          <div className="flex gap-4">
-                            <button onClick={() => setIsEditing(false)} className="flex-1 py-4 text-slate-500 font-bold hover:text-white transition-colors text-[10px] uppercase tracking-widest">{t("detail.cancel")}</button>
-                            <button onClick={(e) => handleUpdate(e as any)} disabled={isUpdating} className="flex-[2] bg-brand-violet text-white font-extrabold py-4 rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 text-[10px] tracking-widest uppercase shadow-xl shadow-brand-violet/20">
-                              {isUpdating ? "..." : t("detail.saveChanges")}
-                              <CheckCircle2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className={`px-4 py-2.5 rounded-3xl text-xs leading-relaxed w-[95%] shadow-xl ${
-                          msg.role === "admin" ? "bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan/90 border-r-4 border-r-brand-cyan" : "bg-white/5 border border-white/10 text-slate-300"
-                        }`}>
-                          {msg.role === "admin" && (
-                            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-brand-cyan/10">
-                              <ShieldCheck className="w-3.5 h-3.5" />
-                              <span className="font-bold text-[9px] uppercase tracking-tighter">{t("detail.officialResponse")}</span>
-                            </div>
-                          )}
-                          <p className="whitespace-pre-wrap">{msg.content}</p>
-                        </div>
-                      )}
+                        )}
+                        <p className="whitespace-pre-wrap">{msg.content}</p>
+                      </div>
                     </div>
                   ))}
                 </div>

@@ -96,6 +96,9 @@ export default function SupportDetailPage() {
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to List
         </Link>
+        <div className="flex-1 px-8">
+          <h1 className="text-xl font-bold text-white tracking-tight truncate max-w-md">{inquiry.title}</h1>
+        </div>
         <div className="flex items-center gap-3">
           <span className={cn(
             "px-3 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-widest border",

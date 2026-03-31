@@ -1,15 +1,19 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
 import { useState, useEffect } from 'react';
+import { useRouter, useParams } from "next/navigation";
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Menu, X } from 'lucide-react';
 
 export default function Header() {
   const t = useTranslations('Common');
-  const locale = useLocale();
+  const router = useRouter();
+  const params = useParams();
   const pathname = usePathname();
+  const locale = params.locale as string;
+  const isAdmin = pathname.includes('/admin');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -18,6 +22,9 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Hide header on admin pages
+  if (isAdmin) return null;
 
   const navLinks = [
     { name: t('home'), href: '/' },

@@ -23,6 +23,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { addInquiryMessage } from "@/app/actions/inquiry";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 interface Inquiry {
   id: string;
@@ -35,6 +36,7 @@ interface Inquiry {
   createdAt: any;
   userId?: string;
   message?: string;
+  title: string;
 }
 
 function InquiriesContent() {
@@ -52,39 +54,65 @@ function InquiriesContent() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
-    const q = query(collection(db, "inquiries"), orderBy("createdAt", "desc"));
+    let isMounted = true;
+    let unsubscribe: (() => void) | null = null;
     
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Inquiry[];
-      setInquiries(data);
-      setLoading(false);
-
-      if (targetId && !selectedInquiry) {
-        const target = data.find(item => item.id === targetId);
-        if (target) setSelectedInquiry(target);
-      }
-    }, (err: any) => {
-      console.warn("Firestore Index Fallback:", err);
-      const fallbackQ = query(collection(db, "inquiries"));
-      onSnapshot(fallbackQ, (snapshot) => {
-        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Inquiry[];
+    try {
+      const q = query(collection(db, "inquiries"), orderBy("createdAt", "desc"));
+      
+      unsubscribe = onSnapshot(q, (snapshot) => {
+        if (!isMounted) return;
+        
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Inquiry[];
+        
         setInquiries(data);
         setLoading(false);
-        setError("INDEX_MISSING: 실시간 정렬이 지원되지 않습니다.");
-        
+
         if (targetId && !selectedInquiry) {
           const target = data.find(item => item.id === targetId);
           if (target) setSelectedInquiry(target);
         }
+      }, (err: any) => {
+        if (!isMounted) return;
+        console.warn("Firestore Index Fallback:", err);
+        
+        // 인덱스가 없을 경우의 폴백 리스너
+        const fallbackQ = query(collection(db, "inquiries"));
+        const fallbackUnsubscribe = onSnapshot(fallbackQ, (snapshot) => {
+          if (!isMounted) return;
+          const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Inquiry[];
+          setInquiries(data);
+          setLoading(false);
+          setError("실시간 정렬 인덱스가 생성 중입니다. 수동 정렬로 전환합니다.");
+          
+          if (targetId && !selectedInquiry) {
+            const target = data.find(item => item.id === targetId);
+            if (target) setSelectedInquiry(target);
+          }
+        });
+        
+        // 폴백 리스너가 등록되면 이전 리스너 종료 (메모리 누수 방지)
+        if (unsubscribe) unsubscribe();
+        unsubscribe = fallbackUnsubscribe;
       });
-    });
+    } catch (err) {
+      console.error("Firestore setup error:", err);
+      setLoading(false);
+    }
 
-    return () => unsubscribe();
+    return () => {
+      isMounted = false;
+      if (unsubscribe) unsubscribe();
+    };
   }, [targetId, selectedInquiry]);
 
   const handleSendReply = async () => {
@@ -128,6 +156,18 @@ function InquiriesContent() {
     return matchesSearch && matchesFilter;
   });
 
+  // Apply Pagination
+  const totalPages = Math.ceil(filteredInquiries.length / pageSize);
+  const pagedInquiries = filteredInquiries.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  // Reset page when filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus, pageSize]);
+
   return (
     <div className="flex flex-col h-[calc(100vh-140px)] animate-in fade-in duration-700">
       <div className="flex justify-between items-center mb-8">
@@ -168,6 +208,18 @@ function InquiriesContent() {
               RESPONDED
             </button>
           </div>
+          
+          <div className="flex items-center gap-2 bg-white/5 p-1 rounded-xl border border-white/10">
+            <select 
+              value={pageSize} 
+              onChange={(e) => setPageSize(Number(e.target.value))}
+              className="bg-transparent text-white text-xs font-bold px-2 py-1 outline-none cursor-pointer"
+            >
+              <option value={10} className="bg-slate-900">10 Rows</option>
+              <option value={20} className="bg-slate-900">20 Rows</option>
+              <option value={30} className="bg-slate-900">30 Rows</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -194,27 +246,44 @@ function InquiriesContent() {
                 <div className="w-8 h-8 border-3 border-brand-violet/20 border-t-brand-violet rounded-full animate-spin" />
                 <p className="text-slate-500 text-xs font-mono">Synchronizing Data...</p>
               </div>
-            ) : filteredInquiries.length > 0 ? (
-              filteredInquiries.map((inquiry) => (
-                <div 
+            ) : pagedInquiries.length > 0 ? (
+              pagedInquiries.map((inquiry) => (
+                <motion.div 
                   key={inquiry.id}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => setSelectedInquiry(inquiry)}
-                  className={`p-4 rounded-2xl cursor-pointer transition-all border ${selectedInquiry?.id === inquiry.id ? "bg-brand-violet/10 border-brand-violet/30" : "bg-transparent border-transparent hover:bg-white/5"}`}
+                  className={cn(
+                    "p-4 rounded-2xl cursor-pointer transition-all border relative overflow-hidden group",
+                    selectedInquiry?.id === inquiry.id 
+                      ? "bg-brand-violet/15 border-brand-violet/40 shadow-[0_0_15px_rgba(139,92,246,0.1)]" 
+                      : "bg-transparent border-transparent hover:bg-white/5"
+                  )}
                 >
+                  {selectedInquiry?.id === inquiry.id && (
+                    <motion.div 
+                      layoutId="active-indicator"
+                      className="absolute left-0 top-0 bottom-0 w-1 bg-brand-violet"
+                    />
+                  )}
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="text-white font-bold text-sm truncate max-w-[150px]">{inquiry.name}</h4>
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-widest ${inquiry.status === "responded" ? "bg-green-400/20 text-green-400" : "bg-brand-violet/20 text-brand-violet"}`}>
+                    <div className="min-w-0 flex-1 pr-2">
+                      <h4 className="text-white font-bold text-sm truncate">{inquiry.name}</h4>
+                      <p className="text-brand-cyan text-[10px] font-bold truncate opacity-80">{inquiry.title}</p>
+                    </div>
+                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-widest shrink-0 ${inquiry.status === "responded" ? "bg-green-400/20 text-green-400" : "bg-brand-violet/20 text-brand-violet"}`}>
                       {inquiry.status === "responded" ? "responded" : "waiting"}
                     </span>
                   </div>
-                  <p className="text-slate-500 text-xs font-medium mb-1 truncate">{inquiry.topic}</p>
-                  <div className="flex justify-between items-center">
-                    <p className="text-slate-600 text-[10px] uppercase font-mono">
+                  <div className="flex justify-between items-center mt-1">
+                    <p className="text-slate-500 text-[10px] uppercase font-mono">
                       {inquiry.createdAt?.toDate ? inquiry.createdAt.toDate().toLocaleDateString() : "PENDING"}
                     </p>
-                    <ChevronRight className={`w-4 h-4 transition-all ${selectedInquiry?.id === inquiry.id ? "text-brand-violet translate-x-1" : "text-white/10"}`} />
+                    <ChevronRight className={cn(
+                      "w-4 h-4 transition-all duration-300",
+                      selectedInquiry?.id === inquiry.id ? "text-brand-violet translate-x-1" : "text-white/10 group-hover:text-white/30"
+                    )} />
                   </div>
-                </div>
+                </motion.div>
               ))
             ) : (
               <div className="flex flex-col items-center justify-center h-64 text-slate-600">
@@ -223,6 +292,40 @@ function InquiriesContent() {
               </div>
             )}
           </div>
+
+          {/* Pagination Navigation */}
+          {totalPages > 1 && (
+            <div className="p-4 border-t border-white/5 flex items-center justify-center gap-2">
+              <button 
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => prev - 1)}
+                className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-white text-[10px] font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-all uppercase tracking-widest"
+              >
+                Prev
+              </button>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+                  <button
+                    key={num}
+                    onClick={() => setCurrentPage(num)}
+                    className={cn(
+                      "w-6 h-6 rounded-lg text-[10px] font-bold transition-all",
+                      currentPage === num ? "bg-brand-violet text-white" : "text-slate-500 hover:text-white"
+                    )}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+              <button 
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => prev + 1)}
+                className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-white text-[10px] font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-all uppercase tracking-widest"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex-1 flex flex-col bg-white/5 border border-white/5 rounded-3xl overflow-hidden relative">
@@ -240,9 +343,13 @@ function InquiriesContent() {
                     <div className="w-10 h-10 rounded-xl bg-brand-violet/20 flex items-center justify-center text-brand-violet shrink-0">
                       <User className="w-5 h-5" />
                     </div>
-                    <div className="min-w-0">
-                      <h3 className="text-white font-bold text-base truncate">{selectedInquiry.name}</h3>
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <h3 className="text-white font-bold text-base truncate">{selectedInquiry.name}</h3>
+                        <span className="text-slate-600 text-xs">|</span>
+                        <h4 className="text-brand-cyan font-bold text-sm truncate">{selectedInquiry.title}</h4>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                         <p className="text-slate-500 text-[10px] flex items-center gap-1.5">
                           <Mail className="w-3 h-3" /> {selectedInquiry.email}
                         </p>
@@ -264,7 +371,7 @@ function InquiriesContent() {
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                <div className="flex-1 overflow-y-auto p-4 space-y-6 flex flex-col">
                   {[...(selectedInquiry.messages || [])].reverse().map((msg: any, i: number, arr: any[]) => (
                     <div key={i} className={`flex gap-3 ${msg.role === "admin" ? "flex-row-reverse" : ""}`}>
                       <div className="flex-1 max-w-[95%]">
@@ -273,7 +380,9 @@ function InquiriesContent() {
                             {msg.role === "admin" ? "Lichtzen Admin" : (i === arr.length - 1 ? "Original Inquiry" : "User Response")}
                           </span>
                           <span className="text-[9px] font-mono text-slate-600">
-                             {msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleString() : ""}
+                             {msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleString() : 
+                              (typeof msg.createdAt === 'string' ? new Date(msg.createdAt).toLocaleString() :
+                              (msg.createdAt instanceof Date ? msg.createdAt.toLocaleString() : ""))}
                           </span>
                         </div>
                         <div className={`px-4 py-2.5 rounded-2xl border ${msg.role === "admin" ? "bg-brand-cyan/10 border-brand-cyan/20 rounded-tr-none" : "bg-white/5 border-white/5 rounded-tl-none"}`}>
@@ -282,7 +391,7 @@ function InquiriesContent() {
                               <Filter className="w-3 h-3" /> {selectedInquiry.topic}
                             </h4>
                           )}
-                          <p className={`text-xs leading-relaxed ${msg.role === "admin" ? "text-slate-200 font-medium" : "text-slate-300"}`}>
+                          <p className={`text-xs leading-relaxed whitespace-pre-wrap ${msg.role === "admin" ? "text-slate-200 font-medium" : "text-slate-300"}`}>
                             {msg.content}
                           </p>
                         </div>

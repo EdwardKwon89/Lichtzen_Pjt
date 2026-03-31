@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { LayoutDashboard, Mail, Settings, Users, ArrowLeft, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link, useRouter, usePathname } from "@/i18n/routing";
+import { LayoutDashboard, Mail, Settings, Users, ArrowLeft, LogOut, ChevronLeft, ChevronRight, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { logoutAdmin } from "@/app/actions/admin-auth";
+import { useParams } from "next/navigation";
 
 export interface Inquiry {
   id: string;
@@ -16,12 +17,13 @@ export interface Inquiry {
   createdAt: any;
   userId?: string;
   message?: string;
+  title: string;
 }
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin", color: "text-brand-cyan" },
   { icon: Mail, label: "Inquiries", href: "/admin/inquiries", color: "text-brand-violet" },
-  { icon: Users, label: "Users", href: "/admin/users", color: "text-brand-cyan" },
+  // { icon: Users, label: "Users", href: "/admin/users", color: "text-brand-cyan" }, // 현재 페이지 없음으로 인해 임시 주석 처리
   { icon: Settings, label: "Settings", href: "/admin/settings", color: "text-brand-violet" },
 ];
 
@@ -32,6 +34,8 @@ interface AdminSidebarProps {
 
 export default function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const params = useParams();
 
   return (
     <div className={cn(
@@ -39,12 +43,6 @@ export default function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps)
       collapsed ? "w-20" : "w-64"
     )}>
       <div className={cn("p-8 pt-10 relative transition-all duration-300", collapsed && "p-4 flex flex-col items-center")}>
-        <button 
-          onClick={onToggle}
-          className="absolute -right-3 top-10 bg-slate-800 border border-white/10 rounded-full p-1 text-slate-400 hover:text-white transition-colors z-[60]"
-        >
-          {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
-        </button>
 
         {!collapsed && (
           <Link 
@@ -56,17 +54,32 @@ export default function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps)
           </Link>
         )}
         
-        <div className={cn("relative transition-all duration-300", collapsed && "mb-8")}>
+        <div className={cn("relative transition-all duration-300 flex items-center justify-between gap-2", collapsed && "mb-8")}>
           {collapsed ? (
             <div className="w-10 h-10 bg-brand-cyan/20 rounded-xl flex items-center justify-center font-bold text-brand-cyan text-xl">L</div>
           ) : (
-            <>
-              <h1 className="text-2xl font-heading font-bold text-white tracking-tighter">
-                Lichtzen <span className="text-brand-cyan">Admin</span>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl font-heading font-bold text-white tracking-tighter truncate">
+                Admin
               </h1>
-              <div className="w-8 h-1 bg-brand-cyan/30 mt-2 rounded-full" />
-            </>
+              <div className="w-8 h-1 bg-brand-cyan/30 mt-1 rounded-full" />
+            </div>
           )}
+          
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onToggle?.();
+            }}
+            className={cn(
+              "p-2 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all shadow-lg",
+              collapsed && "absolute -right-3 top-0 scale-75"
+            )}
+            title={collapsed ? "Expand" : "Collapse"}
+          >
+            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </button>
         </div>
       </div>
 
@@ -97,12 +110,23 @@ export default function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps)
       </nav>
 
       <div className={cn("p-4 border-t border-white/5 transition-all duration-300", collapsed && "p-2")}>
-        <button className={cn(
-          "flex items-center gap-3 w-full px-4 py-3 text-slate-500 hover:text-red-400 hover:bg-red-400/5 rounded-xl transition-all group",
-          collapsed && "justify-center px-0"
-        )}>
+        <button 
+          onClick={async () => {
+            const res = await logoutAdmin();
+            if (res.success) {
+              // i18n/routing의 router.push는 로케일을 자동으로 처리하므로 
+              // 직접 /ko/ 나 /en/ 을 붙이면 경로가 꼬여 404가 발생함
+              router.push('/admin/login' as any);
+              router.refresh();
+            }
+          }}
+          className={cn(
+            "flex items-center gap-3 w-full px-4 py-3 text-slate-500 hover:text-red-400 hover:bg-red-400/5 rounded-xl transition-all group",
+            collapsed && "justify-center px-0"
+          )}
+        >
           <LogOut className="w-5 h-5" />
-          {!collapsed && <span className="text-sm font-medium">{"Logout"}</span>}
+          {!collapsed && <span className="text-sm font-medium">Logout</span>}
         </button>
       </div>
     </div>

@@ -8,7 +8,7 @@ const specs = [
 
 export default function SpotUVPage() {
   return (
-    <div className="bg-brand-navy min-h-screen pt-12 pb-24 text-slate-200">
+    <div className="bg-brand-navy min-h-screen pt-32 pb-24 text-slate-200">
       <div className="container mx-auto px-6">
         {/* Breadcrumb */}
         <nav className="mb-8 flex text-xs font-mono uppercase tracking-widest text-slate-500">

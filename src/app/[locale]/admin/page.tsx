@@ -158,8 +158,12 @@ export default function AdminDashboard() {
                     {inquiry.name?.charAt(0) || "U"}
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-sm">{inquiry.name}</h4>
-                    <p className="text-slate-500 text-xs font-mono">{inquiry.topic}</p>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-white font-bold text-sm tracking-tight">{inquiry.name}</h4>
+                      <span className="text-slate-600 text-xs font-serif leading-none">/</span>
+                      <p className="text-brand-cyan font-bold text-xs truncate max-w-[150px]">{inquiry.title}</p>
+                    </div>
+                    <p className="text-slate-500 text-[10px] font-mono mt-0.5">{inquiry.topic}</p>
                   </div>
                 </div>
                 <div className="text-right flex items-center gap-4">

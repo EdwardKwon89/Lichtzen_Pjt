@@ -3,6 +3,7 @@
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp, doc, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
+import { serializeInquiryData } from "@/lib/firebaseUtils";
 
 export interface Message {
   role: "user" | "admin";
@@ -55,6 +56,7 @@ export async function submitInquiry(formData: {
   }
 }
 
+
 /**
  * 문의 비밀번호를 검증합니다.
  */
@@ -74,11 +76,14 @@ export async function verifyInquiryPassword(id: string, password: string) {
     }
 
     if (storedPassword === inputPassword) {
+      console.log(`Password verified for inquiry: ${id}`);
       return { success: true };
     } else {
+      console.warn(`Password mismatch for inquiry: ${id}. Stored: ${storedPassword}, Input: ${inputPassword}`);
       return { error: "비밀번호가 일치하지 않습니다." };
     }
   } catch (error: any) {
+    console.error(`Verify Password Error for ${id}:`, error);
     return { error: "검증 중 오류가 발생했습니다." };
   }
 }
@@ -96,18 +101,13 @@ export async function getInquiry(id: string) {
     const data = docSnap.data();
     return {
       success: true,
-      data: {
+      data: serializeInquiryData({
         id: docSnap.id,
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        title: data.title,
-        topic: data.topic,
-        status: data.status,
-        messages: data.messages || [],
-      }
+        ...data
+      })
     };
   } catch (error: any) {
+    console.error("Get Inquiry Error:", error);
     return { error: "데이터를 가져오는 중 오류가 발생했습니다." };
   }
 }
@@ -146,7 +146,13 @@ export async function updateInquiry(id: string, updateData: {
 
       revalidatePath(`/support/${id}`);
       revalidatePath("/admin/inquiries");
-      return { success: true, newMessage };
+      
+      const serializedMessage = {
+        ...newMessage,
+        createdAt: newMessage.createdAt.toISOString()
+      };
+
+      return { success: true, newMessage: serializedMessage };
     }
     return { error: "존재하지 않는 문의입니다." };
   } catch (error: any) {

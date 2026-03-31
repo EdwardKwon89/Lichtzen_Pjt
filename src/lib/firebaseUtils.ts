@@ -53,3 +53,39 @@ export const updateInquiryStatus = async (
     return { success: false, error: error.message };
   }
 };
+
+/**
+ * Firestore 데이터를 Plain Object로 변환 (Timestamp -> String)
+ * 서버 액션 외 클라이언트에서도 공통으로 사용하기 위해 유틸리티로 분리
+ */
+export function serializeInquiryData(data: any): any {
+  if (data === null || data === undefined) return data;
+
+  // Firestore Timestamp 처리
+  if (data && typeof data.toDate === "function") {
+    return data.toDate().toISOString();
+  }
+
+  // 표준 Date 객체 처리
+  if (data instanceof Date) {
+    return data.toISOString();
+  }
+
+  // 배열 처리 (재귀)
+  if (Array.isArray(data)) {
+    return data.map(item => serializeInquiryData(item));
+  }
+
+  // 객체 처리 (재귀)
+  if (data !== null && typeof data === "object") {
+    const result: any = {};
+    for (const key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        result[key] = serializeInquiryData(data[key]);
+      }
+    }
+    return result;
+  }
+
+  return data;
+}

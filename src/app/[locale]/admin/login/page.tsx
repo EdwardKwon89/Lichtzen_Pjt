@@ -20,13 +20,19 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError("");
 
-    const result = await loginAdmin(id, pw);
+    try {
+      const result = await loginAdmin(id, pw);
 
-    if (result.success) {
-      router.push(`/${locale}/admin/inquiries`);
-      router.refresh();
-    } else {
-      setError(result.error || "ID 또는 비밀번호가 틀렸습니다.");
+      if (result.success) {
+        // 클라이언트 캐시 데드락을 방지하기 위해 강제 새로고침 리다이렉트 사용
+        window.location.href = `/${locale}/admin/inquiries`;
+      } else {
+        setError(result.error || "ID 또는 비밀번호가 틀렸습니다.");
+        setLoading(false);
+      }
+    } catch (err: any) {
+      console.error("Login client error:", err);
+      setError("로그인 처리 중 예상치 못한 오류가 발생했습니다.");
       setLoading(false);
     }
   };

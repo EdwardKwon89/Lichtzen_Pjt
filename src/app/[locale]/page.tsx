@@ -27,7 +27,7 @@ export default function HomePage() {
             <span className="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-cyan text-xs font-mono tracking-[0.3em] uppercase mb-8 shadow-lg shadow-brand-cyan/5">
               {commonT('subtitle')}
             </span>
-            <h1 className="text-7xl lg:text-9xl font-heading font-black text-white mb-10 leading-[0.9] tracking-tighter">
+            <h1 className="text-6xl lg:text-8xl font-heading font-black text-white mb-10 leading-[0.9] tracking-tighter">
               {t('hero.title1')} <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-violet via-brand-cyan to-brand-violet bg-[length:200%_auto] animate-gradient-slow uppercase">
                 {t('hero.title2')}
