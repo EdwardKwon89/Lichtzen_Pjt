@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const industries = ["battery", "oled"];
 
@@ -36,9 +37,22 @@ export default function ApplicationsPage() {
               className="group relative rounded-[40px] overflow-hidden bg-slate-900 border border-white/5 flex flex-col lg:flex-row"
             >
               <div className="lg:w-1/2 h-[400px] bg-slate-800 relative overflow-hidden flex items-center justify-center">
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-violet/20 via-transparent to-brand-cyan/20 group-hover:scale-110 transition-transform duration-700" />
-                <span className="text-8xl opacity-20 grayscale group-hover:grayscale-0 transition-all">{ind === 'battery' ? '🔋' : '📱'}</span>
+                {ind === 'battery' ? (
+                  <Image 
+                    src="/images/applications/battery.png"
+                    alt="EV Battery Manufacturing with UV Curing"
+                    fill
+                    className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700"
+                  />
+                ) : (
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand-violet/20 via-transparent to-brand-cyan/20 group-hover:scale-110 transition-transform duration-700" />
+                    <span className="text-8xl opacity-20 grayscale group-hover:grayscale-0 transition-all">📱</span>
+                  </>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-900/40 to-transparent" />
               </div>
+
               <div className="lg:w-1/2 p-12 lg:p-20 flex flex-col justify-center">
                 <span className="text-brand-violet font-mono text-xs tracking-widest uppercase mb-4">{t(`${ind}.name`)}</span>
                 <h3 className="text-4xl font-bold text-white mb-6 tracking-tight">{t(`${ind}.title`)}</h3>

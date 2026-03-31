@@ -4,11 +4,17 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { motion } from 'framer-motion';
 
+import { Target, Zap, Globe } from 'lucide-react';
+
 export default function HomePage() {
   const t = useTranslations('Home');
   const commonT = useTranslations('Common');
 
-  const features = ["precision", "energy", "global"];
+  const features = [
+    { id: "precision", icon: <Target className="w-6 h-6 text-brand-cyan" /> },
+    { id: "energy", icon: <Zap className="w-6 h-6 text-brand-violet" /> },
+    { id: "global", icon: <Globe className="w-6 h-6 text-brand-cyan" /> }
+  ];
 
   return (
     <div className="relative overflow-hidden bg-brand-navy min-h-screen border-b border-white/5">
@@ -27,7 +33,7 @@ export default function HomePage() {
             <span className="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-cyan text-xs font-mono tracking-[0.3em] uppercase mb-8 shadow-lg shadow-brand-cyan/5">
               {commonT('subtitle')}
             </span>
-            <h1 className="text-6xl lg:text-8xl font-heading font-black text-white mb-10 leading-[0.9] tracking-tighter">
+            <h1 className="text-6xl lg:text-8xl font-heading font-black text-white mb-10 leading-tight tracking-tighter">
               {t('hero.title1')} <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-violet via-brand-cyan to-brand-violet bg-[length:200%_auto] animate-gradient-slow uppercase">
                 {t('hero.title2')}
@@ -63,7 +69,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((f, idx) => (
             <motion.div 
-              key={f}
+              key={f.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -71,16 +77,17 @@ export default function HomePage() {
               className="p-10 rounded-[32px] bg-white/5 border border-white/5 hover:border-brand-violet/30 transition-all duration-500 group backdrop-blur-sm"
             >
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-violet/20 to-brand-cyan/20 flex items-center justify-center mb-8 border border-white/5 group-hover:scale-110 transition-transform">
-                <div className="w-2 h-2 rounded-full bg-brand-cyan shadow-[0_0_15px_rgba(34,211,238,0.8)]" />
+                {f.icon}
               </div>
-              <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">{t(`features.${f}`)}</h3>
+              <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">{t(`features.${f.id}`)}</h3>
               <p className="text-slate-400 font-light leading-relaxed">
-                {t(`features.${f}Desc`)}
+                {t(`features.${f.id}Desc`)}
               </p>
             </motion.div>
           ))}
         </div>
       </div>
+
 
       {/* Decorative Line Animations */}
       <div className="absolute left-0 bottom-20 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-violet/20 to-transparent" />

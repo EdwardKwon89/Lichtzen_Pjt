@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const specs = [
   { label: "Irradiance", value: "Up to 15,000 mW/cm²" },
   { label: "Irradiation Area", value: "φ3, φ5, φ8, φ10 mm (Customizable)" },
@@ -10,7 +12,7 @@ export default function SpotUVPage() {
   return (
     <div className="bg-brand-navy min-h-screen pt-32 pb-24 text-slate-200">
       <div className="container mx-auto px-6">
-        {/* Breadcrumb */}
+        {/* Breadcrumb ... (unchanged) */}
         <nav className="mb-8 flex text-xs font-mono uppercase tracking-widest text-slate-500">
           <span className="hover:text-brand-violet cursor-pointer">Products</span>
           <span className="mx-2">/</span>
@@ -22,17 +24,23 @@ export default function SpotUVPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Visual Content */}
           <div className="space-y-8">
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-white/5 flex items-center justify-center group">
-              <div className="absolute inset-0 bg-gradient-radial from-brand-violet/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              <div className="text-center px-8 z-10">
-                <div className="w-16 h-16 mb-6 mx-auto flex items-center justify-center">
-                  <div className="absolute w-4 h-4 bg-brand-cyan rounded-full animate-ping" />
-                  <div className="w-2 h-2 bg-brand-cyan rounded-full shadow-[0_0_15px_rgba(6,182,212,0.8)]" />
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-white/10 group">
+              <Image 
+                src="/images/products/spot-uv.png"
+                alt="High-Precision Spot UV Curing System"
+                fill
+                className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-transparent to-transparent opacity-60" />
+              <div className="absolute bottom-8 left-8 z-10">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-2 h-2 bg-brand-cyan rounded-full animate-pulse shadow-[0_0_10px_rgba(6,182,212,1)]" />
+                  <span className="text-xs font-mono text-brand-cyan tracking-widest uppercase">System Active</span>
                 </div>
-                <h3 className="text-sm font-mono text-brand-cyan tracking-widest mb-2 uppercase">Precision Engineering</h3>
-                <p className="text-2xl font-heading font-bold text-white uppercase">SPOT UV MODULE</p>
+                <h3 className="text-xl font-heading font-bold text-white uppercase tracking-tighter">AETHER-UV 8000 SERIES</h3>
               </div>
             </div>
+
             
             <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 to-brand-navy border border-white/5">
               <h4 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4">Precision Control Unit</h4>
