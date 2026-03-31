@@ -7,6 +7,7 @@ import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/fire
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Mail, Shield, MessageSquare, ShieldCheck, X, ArrowRight, CheckCircle2, User, Phone, Tag, Type, Plus, ChevronLeft } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface InquirySummary {
   id: string;
@@ -21,6 +22,7 @@ export default function SupportPage() {
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
+  const t = useTranslations("Support");
 
   // View State (Replaced viewMode with Modals)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -135,8 +137,8 @@ export default function SupportPage() {
   return (
     <div className="min-h-screen pt-24 pb-20 px-6 max-w-[1200px] mx-auto flex flex-col gap-10">
       <header className="text-center">
-        <h1 className="text-5xl font-heading font-bold text-white tracking-tighter mb-4">Lichtzen Support .</h1>
-        <p className="text-slate-500 text-sm max-w-2xl mx-auto">전용 기술 지원과 공정 상담을 위해 내용을 작성해 주세요. 모든 정보는 보안 비밀번호로 암호화되어 안전하게 관리됩니다.</p>
+        <h1 className="text-5xl font-heading font-bold text-white tracking-tighter mb-4">{t("title")} .</h1>
+        <p className="text-slate-500 text-sm max-w-2xl mx-auto">{t("desc")}</p>
       </header>
 
       {/* Main Container */}
@@ -151,7 +153,7 @@ export default function SupportPage() {
               onClick={() => setIsCreateModalOpen(true)}
               className="flex items-center gap-2 px-6 py-2.5 bg-white text-black text-xs font-bold rounded-xl hover:bg-slate-200 transition-all active:scale-95 shadow-lg shadow-white/5"
             >
-              <Plus className="w-4 h-4" /> New Inquiry
+              <Plus className="w-4 h-4" /> {t("submit")}
             </button>
           </div>
 
@@ -194,7 +196,7 @@ export default function SupportPage() {
                         <span className={`px-2 py-0.5 text-[9px] font-extrabold rounded-md uppercase tracking-tight mb-1 ${
                           inquiry.status === "responded" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-brand-violet/10 text-brand-violet border border-brand-violet/10"
                         }`}>
-                          {inquiry.status}
+                          {inquiry.status === "responded" ? t("status.responded") : t("status.waiting")}
                         </span>
                      </div>
                      <ArrowRight className="w-4 h-4 text-slate-800 group-hover:text-white transition-colors" />
@@ -215,7 +217,7 @@ export default function SupportPage() {
               <div className="px-10 pt-10 pb-6 flex justify-between items-start shrink-0">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 bg-brand-cyan rounded-full animate-pulse" />
-                  <h2 className="text-2xl font-bold text-white">New Inquiry</h2>
+                  <h2 className="text-2xl font-bold text-white">{t("formTitle")}</h2>
                 </div>
                 <button onClick={() => setIsCreateModalOpen(false)} className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors">
                   <X className="w-5 h-5 text-slate-400" />
@@ -226,13 +228,13 @@ export default function SupportPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 pl-1">
-                      <User className="w-4 h-4 text-brand-violet" /> Requester Name
+                      <User className="w-4 h-4 text-brand-violet" /> {t("name")}
                     </label>
                     <input required placeholder="Full Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-violet/30 transition-all placeholder:text-slate-700" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 pl-1">
-                      <Mail className="w-4 h-4 text-brand-cyan" /> Email Address
+                      <Mail className="w-4 h-4 text-brand-cyan" /> {t("email")}
                     </label>
                     <input required type="email" placeholder="email@example.com" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan/30 transition-all placeholder:text-slate-700" />
                   </div>
@@ -241,13 +243,13 @@ export default function SupportPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 pl-1">
-                      <Phone className="w-4 h-4 text-brand-cyan" /> Phone Number
+                      <Phone className="w-4 h-4 text-brand-cyan" /> {t("phone")}
                     </label>
                     <input placeholder="010-0000-0000" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan/30 transition-all placeholder:text-slate-700" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 pl-1">
-                      <Shield className="w-4 h-4 text-brand-violet" /> Verification Password (4 digits)
+                      <Shield className="w-4 h-4 text-brand-violet" /> {t("password")}
                     </label>
                     <input required type="password" maxLength={4} pattern="[0-9]*" inputMode="numeric" placeholder="····" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-violet/30 transition-all placeholder:text-slate-700 tracking-widest font-mono" />
                   </div>
@@ -256,7 +258,7 @@ export default function SupportPage() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   <div className="md:col-span-1 space-y-2">
                     <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 pl-1">
-                      <Tag className="w-4 h-4 text-brand-violet" /> Category
+                      <Tag className="w-4 h-4 text-brand-violet" /> {t("topic")}
                     </label>
                     <select value={formData.topic} onChange={(e) => setFormData({...formData, topic: e.target.value})} className="w-full bg-white/10 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-violet/30 transition-all appearance-none cursor-pointer">
                       <option value="Product Inquiry">Product Inquiry</option>
@@ -267,7 +269,7 @@ export default function SupportPage() {
                   </div>
                   <div className="md:col-span-3 space-y-2">
                     <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 pl-1">
-                      <Type className="w-4 h-4 text-brand-violet" /> Inquiry Title
+                      <Type className="w-4 h-4 text-brand-violet" /> {t("titleField")}
                     </label>
                     <input required placeholder="Subject of your inquiry" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-violet/30 transition-all placeholder:text-slate-700" />
                   </div>
@@ -275,13 +277,13 @@ export default function SupportPage() {
 
                 <div className="space-y-2">
                   <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 pl-1">
-                    <MessageSquare className="w-4 h-4 text-brand-cyan" /> Detailed Message
+                    <MessageSquare className="w-4 h-4 text-brand-cyan" /> {t("message")}
                   </label>
                   <textarea required rows={8} placeholder="Explain your requirements..." value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan/30 transition-all resize-none font-sans leading-relaxed placeholder:text-slate-700" />
                 </div>
 
                 <button disabled={isSubmitting} className="w-full bg-white hover:bg-slate-200 text-black font-extrabold py-4.5 rounded-xl transition-all flex items-center justify-center gap-2 group text-xs tracking-widest uppercase active:scale-95 shadow-xl shadow-brand-cyan/5">
-                  {isSubmitting ? "Processing..." : "Submit Inquiry"}
+                  {isSubmitting ? "..." : t("submit")}
                   {!isSubmitting && <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
                 </button>
               </form>
@@ -324,13 +326,13 @@ export default function SupportPage() {
             <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }} className="fixed inset-x-6 top-10 bottom-10 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-[700px] bg-slate-950 border border-white/10 rounded-[40px] shadow-3xl z-[201] p-1 overflow-hidden flex flex-col">
               <div className="px-10 pt-10 pb-6 flex justify-between items-start shrink-0">
                 <div>
-                   <h2 className="text-2xl font-bold text-white mb-1">{isEditing ? "Edit Inquiry" : "Inquiry Details"}</h2>
+                   <h2 className="text-2xl font-bold text-white mb-1">{isEditing ? t("detail.editDocument") : t("detail.editDocument")}</h2>
                    <p className="text-slate-500 text-[11px] uppercase tracking-widest font-mono">Inquiry Management</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {!isEditing && (
                     <button onClick={() => setIsEditing(true)} className="flex items-center gap-2 px-4 py-2 bg-brand-violet/20 text-brand-violet text-[10px] font-bold rounded-lg border border-brand-violet/30 hover:bg-brand-violet/30 transition-colors">
-                      Edit
+                      {t("detail.editDocument")}
                     </button>
                   )}
                   <button onClick={() => setIsDetailModalOpen(false)} className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors">
@@ -346,7 +348,7 @@ export default function SupportPage() {
                     <div key={index} className={`flex flex-col ${msg.role === "admin" ? "items-start" : "items-end"}`}>
                       <div className="flex items-center gap-2 mb-2">
                          <span className={`text-[10px] font-bold uppercase tracking-widest ${msg.role === "admin" ? "text-brand-cyan" : "text-brand-violet"}`}>
-                            {msg.role === "admin" ? "Admin Response" : "Original Inquiry"}
+                            {msg.role === "admin" ? t("detail.officialResponse") : t("formTitle")}
                          </span>
                          <span className="text-slate-700 text-[10px]">/</span>
                          <span className="text-slate-500 text-[10px] font-mono">
@@ -383,9 +385,9 @@ export default function SupportPage() {
                           </div>
 
                           <div className="flex gap-4">
-                            <button onClick={() => setIsEditing(false)} className="flex-1 py-4 text-slate-500 font-bold hover:text-white transition-colors text-[10px] uppercase tracking-widest">Cancel</button>
+                            <button onClick={() => setIsEditing(false)} className="flex-1 py-4 text-slate-500 font-bold hover:text-white transition-colors text-[10px] uppercase tracking-widest">{t("detail.cancel")}</button>
                             <button onClick={(e) => handleUpdate(e as any)} disabled={isUpdating} className="flex-[2] bg-brand-violet text-white font-extrabold py-4 rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 text-[10px] tracking-widest uppercase shadow-xl shadow-brand-violet/20">
-                              {isUpdating ? "Saving..." : "Save Changes"}
+                              {isUpdating ? "..." : t("detail.saveChanges")}
                               <CheckCircle2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -397,7 +399,7 @@ export default function SupportPage() {
                           {msg.role === "admin" && (
                             <div className="flex items-center gap-2 mb-3 pb-3 border-b border-brand-cyan/10">
                               <ShieldCheck className="w-4 h-4" />
-                              <span className="font-bold text-[10px] uppercase tracking-tighter">Official Response</span>
+                              <span className="font-bold text-[10px] uppercase tracking-tighter">{t("detail.officialResponse")}</span>
                             </div>
                           )}
                           <p className="whitespace-pre-wrap">{msg.content}</p>

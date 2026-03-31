@@ -34,7 +34,7 @@ export async function submitInquiry(formData: {
       title: formData.title,
       topic: formData.topic,
       password: String(formData.password).trim(),
-      status: "waiting",
+      status: "waiting", // 최초 등록 시 '대기'
       messages: [
         {
           role: "user",
@@ -126,13 +126,11 @@ export async function updateInquiry(id: string, updateData: {
   try {
     const docRef = doc(db, "inquiries", id);
     
-    // 원본 질의 내용(message)은 첫 번째 메시지 객체에 저장되어 있으므로 이를 업데이트함
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
       const messages = [...(data.messages || [])];
       
-      // 첫 번째 user 메시지를 찾아 내용 업데이트
       if (messages.length > 0 && messages[0].role === "user") {
         messages[0].content = updateData.message;
       }
@@ -166,12 +164,13 @@ export async function addInquiryMessage(id: string, content: string, role: "user
     const newMessage: Message = {
       role,
       content,
-      createdAt: new Date(),
+      createdAt: new Date(), // Timestamp 대신 런타임 Date 사용 (클라이언트 즉시 반영 위함)
     };
 
     await updateDoc(docRef, {
       messages: arrayUnion(newMessage),
       updatedAt: serverTimestamp(),
+      // 관리자가 답변하면 'responded', 고객이 재질의하면 'waiting'
       status: role === "admin" ? "responded" : "waiting",
     });
 

@@ -89,5 +89,36 @@
       "spec2": "Heat Efficiency",
       "spec3": "Response Time"
     }
+  },
+  "Support": {
+    "title": "Support & Inquiry",
+    "desc": "If you need technical support or have product inquiries, please contact us anytime.",
+    "formTitle": "Inquiry Form",
+    "name": "Name / Contact Person",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "topic": "Inquiry Topic",
+    "titleField": "Title",
+    "message": "Message Content",
+    "password": "Password (for Access/Edit)",
+    "submit": "Submit Inquiry",
+    "infoTitle": "Contact Information",
+    "address": "Lichtzen Headquarters, Seodaemun-gu, Seoul",
+    "phoneText": "Phone: +82 2-XXX-XXXX",
+    "emailText": "Email: info@lichtzen.com",
+    "status": {
+      "waiting": "Waiting",
+      "responded": "Responded",
+      "closed": "Closed"
+    },
+    "detail": {
+      "backToList": "Back to List",
+      "editDocument": "Edit Document",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel",
+      "followUpPlaceholder": "Need further clarification? Type here...",
+      "officialResponse": "Lichtzen Official Response",
+      "verifiedBy": "Verified by Technical Team"
+    }
   }
 }

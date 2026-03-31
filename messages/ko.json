@@ -90,12 +90,30 @@
     "formTitle": "문의 양식",
     "name": "성함/담당자",
     "email": "이메일 주소",
+    "phone": "연락처",
+    "topic": "문의 분야",
+    "titleField": "제목",
     "message": "문의 내용",
+    "password": "비밀번호 (조회/수정용)",
     "submit": "문의 제출하기",
     "infoTitle": "연락처 정보",
     "address": "서울특별시 서대문구 리트젠 본사",
-    "phone": "전화번호: +82 2-XXX-XXXX",
-    "emailText": "이메일: info@lichtzen.com"
+    "phoneText": "전화번호: +82 2-XXX-XXXX",
+    "emailText": "이메일: info@lichtzen.com",
+    "status": {
+      "waiting": "응답 대기",
+      "responded": "답변 완료",
+      "closed": "문의 종결"
+    },
+    "detail": {
+      "backToList": "목록으로 돌아가기",
+      "editDocument": "문의 수정",
+      "saveChanges": "변경사항 저장",
+      "cancel": "취소",
+      "followUpPlaceholder": "추가 질문이 있으시면 여기에 입력해주세요...",
+      "officialResponse": "리트젠 공식 답변",
+      "verifiedBy": "기술팀 검증 완료"
+    }
   },
   "Products": {
     "uvRoll": {

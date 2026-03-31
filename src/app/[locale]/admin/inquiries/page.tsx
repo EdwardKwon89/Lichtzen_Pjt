@@ -21,7 +21,7 @@ import {
   ArrowLeft
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { addInquiryMessage } from "@/lib/firebaseUtils";
+import { addInquiryMessage } from "@/app/actions/inquiry";
 import Link from "next/link";
 
 interface Inquiry {
@@ -108,7 +108,7 @@ function InquiriesContent() {
     
     const matchesFilter = 
       filterStatus === "all" || 
-      (filterStatus === "waiting" && (inquiry.status === "waiting" || inquiry.status === "unread")) ||
+      (filterStatus === "waiting" && (inquiry.status === "waiting" || inquiry.status === "unread" || !inquiry.status)) ||
       (filterStatus === "responded" && inquiry.status === "responded");
       
     return matchesSearch && matchesFilter;
@@ -189,8 +189,8 @@ function InquiriesContent() {
                 >
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="text-white font-bold text-sm truncate max-w-[150px]">{inquiry.name}</h4>
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-widest ${inquiry.status === "unread" || inquiry.status === "waiting" ? "bg-brand-violet/20 text-brand-violet" : "bg-green-400/20 text-green-400"}`}>
-                      {inquiry.status === "unread" || inquiry.status === "waiting" ? "waiting" : "responded"}
+                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-widest ${inquiry.status === "responded" ? "bg-green-400/20 text-green-400" : "bg-brand-violet/20 text-brand-violet"}`}>
+                      {inquiry.status === "responded" ? "responded" : "waiting"}
                     </span>
                   </div>
                   <p className="text-slate-500 text-xs font-medium mb-1 truncate">{inquiry.topic}</p>
@@ -265,17 +265,17 @@ function InquiriesContent() {
                     </div>
                   </div>
 
-                  {selectedInquiry.messages?.map((msg: any, i: number) => (
-                    <div key={i} className={`flex gap-4 ${msg.sender === "admin" ? "flex-row-reverse" : ""}`}>
+                  {selectedInquiry.messages?.slice(1).map((msg: any, i: number) => (
+                    <div key={i} className={`flex gap-4 ${msg.role === "admin" ? "flex-row-reverse" : ""}`}>
                       <div className="flex-1">
-                        <div className={`flex items-center gap-2 mb-3 ${msg.sender === "admin" ? "flex-row-reverse" : ""}`}>
-                          <span className={`text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded-md ${msg.sender === "admin" ? "bg-brand-cyan/20 text-brand-cyan" : "bg-white/5 text-slate-500"}`}>
-                            {msg.sender === "admin" ? "Lichtzen Admin" : "User Response"}
+                        <div className={`flex items-center gap-2 mb-3 ${msg.role === "admin" ? "flex-row-reverse" : ""}`}>
+                          <span className={`text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded-md ${msg.role === "admin" ? "bg-brand-cyan/20 text-brand-cyan" : "bg-white/5 text-slate-500"}`}>
+                            {msg.role === "admin" ? "Lichtzen Admin" : "User Response"}
                           </span>
                         </div>
-                        <div className={`p-6 rounded-2xl border ${msg.sender === "admin" ? "bg-brand-cyan/10 border-brand-cyan/20 rounded-tr-none" : "bg-white/5 border-white/5 rounded-tl-none"}`}>
-                          <p className={`text-sm leading-relaxed ${msg.sender === "admin" ? "text-slate-200 font-medium" : "text-slate-400"}`}>
-                            {msg.text}
+                        <div className={`p-6 rounded-2xl border ${msg.role === "admin" ? "bg-brand-cyan/10 border-brand-cyan/20 rounded-tr-none" : "bg-white/5 border-white/5 rounded-tl-none"}`}>
+                          <p className={`text-sm leading-relaxed ${msg.role === "admin" ? "text-slate-200 font-medium" : "text-slate-400"}`}>
+                            {msg.content}
                           </p>
                         </div>
                       </div>
