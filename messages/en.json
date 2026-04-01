@@ -1,0 +1,158 @@
+{
+  "Common": {
+    "title": "Lichtzen",
+    "subtitle": "The Precision of Light",
+    "contact": "Inquiry",
+    "learnMore": "Learn More",
+    "home": "Home",
+    "products": "Products",
+    "technology": "Technology",
+    "applications": "Solutions",
+    "about": "About",
+    "support": "Support",
+    "precision": "Optical Precision",
+    "sustainability": "Sustainability",
+    "innovation": "Innovation"
+  },
+  "Home": {
+    "hero": {
+      "title1": "Engineering",
+      "title2": "The Perfect Light",
+      "desc": "Global Leader in UV & MIR Optical Systems. Defining the new standards of industrial precision for next-generation manufacturing."
+    },
+    "features": {
+      "precision": "Optical Precision Control",
+      "precisionDesc": "Achieving nano-scale accuracy in light distribution for consistent, high-yield production.",
+      "energy": "Eco-Efficiency",
+      "energyDesc": "Lichtzen's MIR technology reduces energy consumption by over 30% compared to traditional methods.",
+      "global": "Global Strategic Partner",
+      "globalDesc": "Trusted by market leaders in Battery, Display, and Semiconductor industries worldwide."
+    }
+  },
+  "About": {
+    "visionTitle": "Our Vision",
+    "visionMain1": "Optical Excellence",
+    "visionMain2": "The Industry Standard",
+    "ceoMessage": "We are not just a manufacturer; we are your strategic engineering partner. By mastering the physical properties of light, we empower the technological evolution of our clients.",
+    "ceoLabel": "Lichtzen Management & Technical Advisory Board",
+    "rndTitle": "Technological Frontier",
+    "rndDesc": "Since 2010, the Lichtzen R&D Center has pioneered industrial optical physics.",
+    "timelineHeading": "15 Years of Optical Innovation",
+    "timeline": {
+      "2010": "Lichtzen Co., Ltd. Founded (Specializing in UV/IR Optical Physics)",
+      "2013": "Certified as Venture Enterprise & Acquired ISO 9001/14001 Quality Certificates",
+      "2016": "Establishment of Corporate R&D Center (Dedicated to Optical Engineering)",
+      "2019": "Localization of MIR Drying Systems for EV Battery Electrode Production",
+      "2022": "Global Market Expansion (Achieved $10M+ in Annual Export Revenue)",
+      "2024": "Launch of Next-Gen Intelligent UV Curing Platform Solutions"
+    },
+    "values": {
+      "precision": "Nano-scale accuracy in irradiation control systems.",
+      "sustainability": "Eco-friendly industrial processes with optimized energy footprints.",
+      "innovation": "Redefining manufacturing paradigms for display and battery sectors."
+    }
+  },
+  "Applications": {
+    "title": "Industrial Solutions",
+    "desc": "Where precision meets performance. Lichtzen's technologies empower the world's most sophisticated manufacturing lines.",
+    "battery": {
+      "name": "Secondary Battery (EV)",
+      "title": "Electrode Deep-Drying Solutions",
+      "desc": "MIR systems penetrate the core of coated electrodes, ensuring rapid solvent evaporation and superior quality control.",
+      "feat1": "Maximized Solvent Evaporation Rate",
+      "feat2": "Active Mass Surface Stabilization",
+      "feat3": "Hybrid Thermal Management System"
+    },
+    "oled": {
+      "name": "Display (OLED)",
+      "title": "Precision UV Bonding & Repair",
+      "desc": "Advanced wavelength control and cooling technology ensure no organic degradation during high-resolution display manufacturing.",
+      "feat1": "Zero Heat Damage (ZHD) Technology",
+      "feat2": "Cryogenic-級 UV Distribution Control",
+      "feat3": "Seamless Zero-Defect Curing Process"
+    }
+  },
+  "Products": {
+    "uvRoll": {
+      "title": "UV Roll-to-Roll System",
+      "desc": "Elite performance for continuous high-speed manufacturing with extreme curing uniformity.",
+      "specTitle": "Technical Specifications",
+      "spec1": "Web Processing Width",
+      "spec2": "Line Speed Performance",
+      "spec3": "Irradiation Uniformity"
+    },
+    "mirSystem": {
+      "title": "MIR Specialty Drying System",
+      "desc": "Innovative Medium-wave Infrared heating solutions for high-performance battery electrode drying.",
+      "specTitle": "Core Specifications",
+      "spec1": "Peak Wavelength Performance",
+      "spec2": "Heat Transfer Efficiency",
+      "spec3": "Real-time Response Control"
+    },
+    "spotUv": {
+      "title": "Precision Spot UV Curing",
+      "desc": "Ultra-high intensity spot systems for terminal assembly and precision component fixing.",
+      "specTitle": "Key Specifications",
+      "spec1": "Max Light Intensity",
+      "spec2": "Multi-Channel Synchronization",
+      "spec3": "Variable Curing Intervals"
+    }
+  },
+  "Support": {
+    "title": "Global Customer Service",
+    "desc": "From engineering consultancy to technical support, our specialized team is ready to assist your inquiry.",
+    "formTitle": "Technical Inquiry Form",
+    "name": "Full Name / Organization",
+    "email": "Email Address",
+    "phone": "Direct Contact Number",
+    "topic": "Primary Area of Interest",
+    "titleField": "Inquiry Title",
+    "message": "Detailed Requirements (Please specify your technical context for a faster response.)",
+    "password": "Access Password",
+    "submit": "Submit Request",
+    "infoTitle": "Headquarters & Global Hubs",
+    "address": "Seoul Headquarters / R&D Center, Republic of Korea",
+    "phoneText": "Direct: +82 2-XXX-XXXX",
+    "emailText": "E-mail: contact@lichtzen.com",
+    "status": {
+      "waiting": "In Review",
+      "responded": "Official Response Provided",
+      "closed": "Ticket Closed"
+    },
+    "detail": {
+      "backToList": "Back to Ticket List",
+      "editDocument": "Edit Requirements",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel",
+      "followUpPlaceholder": "Type your follow-up questions here for our engineers...",
+      "officialResponse": "Lichtzen Technical Team Official Response",
+      "verifiedBy": "Process Verified & Validated"
+    }
+  },
+  "Technology": {
+    "title": "The Science of Optical Precision",
+    "subtitle": "Core Competency",
+    "desc": "Lichtzen doesn't just build equipment. We engineer light. Through rigorous simulation and spectral analysis, we deliver unmatched performance in UV and IR applications.",
+    "precision": {
+      "title": "Optical Simulation",
+      "desc": "Advanced Ray-tracing and flux analysis to ensure 99.9% energy uniformity across the target surface."
+    },
+    "spectrum": {
+      "title": "Spectrum Engineering",
+      "desc": "Customized wavelength tuning for specific material absorption rates, maximizing efficiency."
+    },
+    "thermal": {
+      "title": "Precision Thermal Control",
+      "desc": "Multi-zone temperature monitoring and feedback loops for stable process environments."
+    },
+    "rdTitle": "R&D Powerhouse",
+    "rdStep1": {
+      "title": "Spectral Testing",
+      "desc": "We measure the exact absorption spectrum of your materials to design the perfect cure."
+    },
+    "rdStep2": {
+      "title": "Prototyping",
+      "desc": "Rapid iteration of reflector geometries for optimized energy distribution."
+    }
+  }
+}

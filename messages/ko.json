@@ -1,0 +1,158 @@
+{
+  "Common": {
+    "title": "Lichtzen",
+    "subtitle": "The Precision of Light",
+    "contact": "문의하기",
+    "learnMore": "더 알아보기",
+    "home": "홈",
+    "products": "제품소개",
+    "technology": "기술력",
+    "applications": "솔루션",
+    "about": "회사소개",
+    "support": "고객지원",
+    "precision": "정밀공학",
+    "sustainability": "친환경/지속가능성",
+    "innovation": "혁신적 광학기술"
+  },
+  "Home": {
+    "hero": {
+      "title1": "빛의 정밀함으로",
+      "title2": "산업의 미래를 설계합니다",
+      "desc": "UV 및 MIR 광학 시스템 분야의 글로벌 리더. 리트젠은 차세대 제조 공정을 위한 고품질 건조 및 경화 솔루션을 제공합니다."
+    },
+    "features": {
+      "precision": "광학 정밀 제어",
+      "precisionDesc": "나노 스케일의 빛 조사 균일도 조절 기술을 통해 고품질 공정을 보장합니다.",
+      "energy": "친환경 에너지 효율",
+      "energyDesc": "독보적인 MIR 기술로 기존 대비 전력 소모를 30% 이상 절감합니다.",
+      "global": "글로벌 비즈니스 파트너",
+      "globalDesc": "배터리, 디스플레이, 반도체 분야의 글로벌 선두 기업들에게 최적의 솔루션을 제공합니다."
+    }
+  },
+  "About": {
+    "visionTitle": "기업 비전",
+    "visionMain1": "광학적 수월성",
+    "visionMain2": "산업의 표준이 되다",
+    "ceoMessage": "리트젠은 단순히 광학 장비를 판매하는 기업이 아닙니다. 우리는 빛의 물성을 완벽히 제어하여 고객사의 산업적 진보를 이끄는 정밀 엔지니어링 파트너입니다.",
+    "ceoLabel": "Lichtzen 경영진 및 기술 고문 일동",
+    "rndTitle": "기술의 개척자",
+    "rndDesc": "2010년부터 이어온 광학 물리 연구소의 독보적 데이터",
+    "timelineHeading": "빛의 혁신, 15년의 기록",
+    "timeline": {
+      "2010": "리트젠 주식회사 설립 (UV/IR 광학 시스템 특화)",
+      "2013": "벤처기업 인증 및 ISO 9001/14001 품질 경영 시스템 획득",
+      "2016": "기업부설 연구소 설립 (광물리/광학 엔지니어링 전담)",
+      "2019": "EV 이차전지 전극용 고효율 MIR 건조 시스템 국산화 개발",
+      "2022": "글로벌 시장 확대 (수출 1,000만 불 달성 및 해외 거점 구축)",
+      "2024": "차세대 지능형 UV 경화 플랫폼 솔루션 런칭"
+    },
+    "values": {
+      "precision": "나노 단위의 초정밀 조사 제어 시스템.",
+      "sustainability": "에너지 소모를 최소화한 친환경 산업용 경화 공정.",
+      "innovation": "디스플레이 및 이차전지 제조 기술의 패러다임을 바꿉니다."
+    }
+  },
+  "Applications": {
+    "title": "주요 산업 솔루션",
+    "desc": "리트젠의 광학 솔루션은 세계에서 가장 정밀한 제조 공정에 적용되어 품질의 차이를 만듭니다.",
+    "battery": {
+      "name": "이차전지 (EV Battery)",
+      "title": "전극 심부 건조 솔루션",
+      "desc": "리트젠의 중단파 적외선(MIR) 시스템은 코팅된 전극의 내부부터 신속하게 건조하여 생산 속도를 획기적으로 향상시킵니다.",
+      "feat1": "용제 증발 속도 최대화",
+      "feat2": "활물질 표면 안정화",
+      "feat3": "하이브리드 열관리 시스템"
+    },
+    "oled": {
+      "name": "디스플레이 (OLED)",
+      "title": "정밀 UV 리페어 및 본딩",
+      "desc": "유기물 손상을 최소화하는 특수 파장 제어 기술과 정밀 냉각을 결합하여 고해상도 패널 공정의 수율을 극대화합니다.",
+      "feat1": "열 손상 제로화 기술",
+      "feat2": "초저온 UV 조사 제어",
+      "feat3": "연속 무결점 경화 공정"
+    }
+  },
+  "Products": {
+    "uvRoll": {
+      "title": "UV 롤투롤(Roll-to-Roll) 시스템",
+      "desc": "고속 연속 제조 공정에서 완벽한 경화 균일도를 제공하기 위한 프리미엄 솔루션입니다.",
+      "specTitle": "주요 사양",
+      "spec1": "웹 조사 폭 (Web Processing)",
+      "spec2": "가동 속도 (Line Speed)",
+      "spec3": "조사 균일도 (Lamp Uniformity)"
+    },
+    "mirSystem": {
+      "title": "MIR 특수 건조 시스템",
+      "desc": "이차전지 전극 등 고출력이 요구되는 산업 공정을 위한 혁신적 중단파 가열 솔루션입니다.",
+      "specTitle": "기술 사양",
+      "spec1": "피크 파장 성능 (Peak Wave)",
+      "spec2": "열전달 효율 (Efficiency)",
+      "spec3": "실시간 응답 제어 (Response)"
+    },
+    "spotUv": {
+      "title": "정밀 스팟 UV 경화기",
+      "desc": "미세 접합 및 정밀 부품 고정을 위한 초광도 스팟 조사 시스템.",
+      "specTitle": "핵심 사양",
+      "spec1": "최대 광 강도",
+      "spec2": "다채널 동시 제어",
+      "spec3": "경화 시간 가변 제어"
+    }
+  },
+  "Support": {
+    "title": "글로벌 고객 서비스",
+    "desc": "제품 도입 상담부터 기술 지원까지, 리트젠의 전문가 팀이 신속하게 답변해 드립니다.",
+    "formTitle": "상담 및 기술 문의",
+    "name": "성함 및 소속",
+    "email": "이메일 주소",
+    "phone": "연락처 번호",
+    "topic": "문의 주요 분야",
+    "titleField": "문의 제목",
+    "message": "상세 문의 내용 (구체적으로 작성해 주시면 빠른 답변이 가능합니다.)",
+    "password": "게시글 비밀번호",
+    "submit": "상담 요청 제출",
+    "infoTitle": "본사 및 고객 거점",
+    "address": "대한민국 서울특별시 서대문구 본사 / R&D 센터",
+    "phoneText": "TEL: +82 2-XXX-XXXX",
+    "emailText": "Email: contact@lichtzen.com",
+    "status": {
+      "waiting": "검토 대기",
+      "responded": "답변 완료",
+      "closed": "문의 종결"
+    },
+    "detail": {
+      "backToList": "문의 목록으로 이동",
+      "editDocument": "문의 내용 수정",
+      "saveChanges": "저장",
+      "cancel": "취소",
+      "followUpPlaceholder": "추가 문의 사항을 남겨주시면 담당 엔지니어가 직접 답변 드립니다.",
+      "officialResponse": "리트젠 기술팀 공식 답변",
+      "verifiedBy": "공정 검증 완료"
+    }
+  },
+  "Technology": {
+    "title": "빛의 정밀함, 그 이상의 과학",
+    "subtitle": "CORE COMPETENCY",
+    "desc": "리트젠은 단순히 장비를 만들지 않습니다. 우리는 빛을 설계합니다. 철저한 시뮬레이션과 분광 분석을 통해 UV 및 IR 어플리케이션에서 독보적인 성능을 제공합니다.",
+    "precision": {
+      "title": "광학 시뮬레이션",
+      "desc": "고도화된 레이 트레이싱(Ray-tracing) 및 광속 분석을 통해 타겟 표면에서 99.9% 이상의 에너지 균일도를 확보합니다."
+    },
+    "spectrum": {
+      "title": "스펙트럼 엔지니어링",
+      "desc": "소재별 최적 흡수 파장을 정밀 튜닝하여 공정 효율을 극대화하는 맞춤형 파장 제어 기술을 제공합니다."
+    },
+    "thermal": {
+      "title": "초정밀 열관리 제어",
+      "desc": "멀티 존 온도 모니터링 및 실시간 피드백 루프를 통해 안정적인 공정 환경을 유지합니다."
+    },
+    "rdTitle": "R&D 기술력",
+    "rdStep1": {
+      "title": "분광 특성 테스트",
+      "desc": "고객사 소재의 정확한 흡수 스펙트럼을 측정하여 최적의 경화/건조 조건을 설계합니다."
+    },
+    "rdStep2": {
+      "title": "프로토타이핑",
+      "desc": "최적화된 에너지 조사를 위한 리플렉터 기하 구조의 신속한 반복 설계 및 검증."
+    }
+  }
+}

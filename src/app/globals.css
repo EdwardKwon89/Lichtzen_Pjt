@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@theme {
+  /* Default Branding Colors (Available in all schemes) */
+  --color-brand-navy: #0A0E1A;
+  --color-brand-violet: #8B5CF6;
+  --color-brand-cyan: #06B6D4;
+
+  /* Theme-specific Dynamic Colors (Semantic Tokens) */
+  --color-skin-base: var(--background);
+  --color-skin-foreground: var(--foreground);
+  --color-skin-accent: var(--brand-accent);
+  --color-skin-plate: var(--surface-plate);
+  
+  /* Typography */
+  --font-heading: "Outfit", var(--font-inter), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
+
+  /* Transitions & Effects */
+  --animate-glow: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 10px -2px var(--brand-accent);
+  }
+  to {
+    box-shadow: 0 0 20px 2px var(--color-brand-cyan);
+  }
+}
+
+/* 🕒 Base Variables (Available in all schemes) */
+:root {
+  --font-inter: var(--font-inter);
+  --font-outfit: var(--font-outfit);
+}
+
+/* 🌙 Skin: Deep Navy (Default Premium Dark) */
+:root, [data-theme="deep-navy"] {
+  --background: #0A0E1A;
+  --foreground: #F8FAFC;
+  --surface-plate: #171C21;
+  --brand-accent: #8B5CF6;
+  --border-subtle: rgba(255, 255, 255, 0.05);
+}
+
+/* 🌌 Skin: Ocean Depth (Extreme Pro Dark) */
+[data-theme="ocean-depth"] {
+  --background: #020617;
+  --foreground: #F0F9FF;
+  --surface-plate: #0F172A;
+  --brand-accent: #38BDF8;
+  --border-subtle: rgba(56, 189, 248, 0.1);
+}
+
+/* 🌪️ Skin: Industrial Graphite (Engineering Master) */
+[data-theme="industrial-graphite"] {
+  --background: #334155; 
+  --foreground: #F8FAFC;
+  --surface-plate: #475569;
+  --brand-accent: #FB923C;
+  --border-subtle: rgba(251, 146, 60, 0.2);
+}
+
+/* 💎 Skin: Frosty Crystal (Clean Tech Light) */
+[data-theme="frosty-crystal"] {
+  --background: #FFFFFF;
+  --foreground: #0F172A;
+  --surface-plate: #F1F5F9;
+  --brand-accent: #0D9488;
+  --border-subtle: rgba(13, 148, 136, 0.2);
+}
+
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  transition: background-color 0.4s ease, color 0.4s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+/* 🧊 Utility: Glassmorphism Panel */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+}
+
+[data-theme="frosty-crystal"] .glass-panel {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--brand-accent);
+  border-radius: 4px;
+}
